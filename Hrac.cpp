@@ -3,9 +3,8 @@
 
 
 sf::Sprite& Hrac::getSprite() {
-    return this->sprite;
+    return *sprite;
 }
-
 
 void Hrac::setHealth(int health) {
     this->health = health;
@@ -16,7 +15,7 @@ const int Hrac::getHealth() {
 }
 
 Hrac::~Hrac() {
-
+    delete this->sprite;
 }
 
 Hrac::Hrac(float spawnX, float spawnY) {
@@ -25,8 +24,8 @@ Hrac::Hrac(float spawnX, float spawnY) {
         std::cout << "Could not load player texture" << std::endl;
     }
 
-
-    this->sprite.setTexture(texture);
-    this->sprite.setPosition(spawnX,spawnY);
+    this->sprite = new sf::Sprite();
+    this->sprite->setTexture(texture);
+    this->sprite->setPosition(spawnX,spawnY);
 
 }
