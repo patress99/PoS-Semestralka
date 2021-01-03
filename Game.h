@@ -30,7 +30,7 @@ private:
     sf::Text uiText;
 
     //Background
-    sf::Texture* backGround;
+    sf::Texture backGround;
     //Game logic
     bool endGame;
 

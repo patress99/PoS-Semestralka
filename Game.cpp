@@ -4,9 +4,7 @@
 void Game::initVariables() {
     this->window = nullptr;
 
-    this->backGround = new sf::Texture;
-
-    if (!this->backGround->loadFromFile("C:\\Users\\janci\\CLionProjects\\PoS-Semka\\assets\\bg.png")) {
+    if (!this->backGround.loadFromFile("F:\\skola\\vysoka\\3rocnik\\CLionProjects\\PoS-Semestralka\\PoS-Semestralka\\imgs\\bg.png")) {
         std::cout << "Could not load bg texture" << std::endl;
     }
 
@@ -99,7 +97,7 @@ void Game::render() {
     this->window->clear();
 
     sf::Sprite sprite;
-    sprite.setTexture(*this->backGround);
+    sprite.setTexture(this->backGround);
 
     this->window->draw(sprite);
 
@@ -108,4 +106,3 @@ void Game::render() {
 
     this->window->display();
 }
-

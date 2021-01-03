@@ -15,21 +15,17 @@ const int Hrac::getHealth() {
 }
 
 Hrac::~Hrac() {
-    delete this->texture;
     delete this->sprite;
 }
 
 Hrac::Hrac(float spawnX, float spawnY) {
     this->health = 100;
-
-    this->texture = new sf::Texture();
-
-    if (!texture->loadFromFile("C:\\Users\\janci\\CLionProjects\\PoS-Semka\\assets\\hrac.png")) {
+    if (!texture.loadFromFile("F:\\skola\\vysoka\\3rocnik\\CLionProjects\\PoS-Semestralka\\PoS-Semestralka\\imgs\\hrac1.png")) {
         std::cout << "Could not load player texture" << std::endl;
     }
 
     this->sprite = new sf::Sprite();
-    this->sprite->setTexture(*texture);
+    this->sprite->setTexture(texture);
     this->sprite->setPosition(spawnX,spawnY);
 
 }
