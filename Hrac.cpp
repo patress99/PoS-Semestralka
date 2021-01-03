@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Hrac.h"
 
 
@@ -17,10 +18,16 @@ Hrac::~Hrac() {
 
 }
 
-Hrac::Hrac(sf::Texture& texture, float spawnX, float spawnY) {
+Hrac::Hrac(float spawnX, float spawnY) {
     this->health = 100;
-    texture.loadFromImage("imgs/hrac.png");
-    this->sprite.setTexture(texture, true);
+
+    sf::Texture texture;
+
+    if (!texture.loadFromFile("assets/hrac.png")) {
+        std::cout << "Could not load player texture" << std::endl;
+    }
+
+    this->sprite.setTexture(texture);
     this->sprite.setPosition(spawnX,spawnY);
 
 }

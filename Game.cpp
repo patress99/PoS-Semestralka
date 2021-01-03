@@ -20,12 +20,8 @@ void Game::initWindow()
 }
 
 void Game::initPlayers() {
-    sf::Texture hracTexture;
-
-    hracTexture.loadFromFile("imgs/hrac.png");
-
-    this->hrac1 = new Hrac(hracTexture, 50,50);
-    this->hrac2 = new Hrac(hracTexture,200,50);
+    this->hrac1 = new Hrac(50,50);
+    this->hrac2 = new Hrac(200,50);
 }
 
 void Game::initText()

@@ -7,7 +7,7 @@ private:
     sf::Sprite sprite;
 public:
     ~Hrac();
-    Hrac(sf::Texture& texture, float spawnX, float spawnY);
+    Hrac(float spawnX, float spawnY);
     void setHealth(int health);
     int getHealth();
     sf::Sprite getSprite();
