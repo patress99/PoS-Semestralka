@@ -19,9 +19,8 @@ Hrac::~Hrac() {
 
 Hrac::Hrac(sf::Texture& texture, float spawnX, float spawnY) {
     this->health = 100;
-    sf::Image image;
-    image.loadFromFile(R"(imgs\hrac.png)");
-    texture.update(image);
-    this->sprite.setTexture(texture);
+    texture.loadFromImage("imgs/hrac.png");
+    this->sprite.setTexture(texture, true);
     this->sprite.setPosition(spawnX,spawnY);
+
 }
