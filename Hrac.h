@@ -4,11 +4,12 @@ class Hrac {
 
 private:
     int health;
-    sf::Sprite sprite;
+    sf::Sprite* sprite;
+    sf::Texture* texture;
 public:
     ~Hrac();
     Hrac(float spawnX, float spawnY);
     void setHealth(int health);
-    int getHealth();
-    sf::Sprite getSprite();
+    const int getHealth();
+    sf::Sprite& getSprite();
 };
