@@ -29,6 +29,8 @@ private:
     //Text
     sf::Text uiText;
 
+    //Background
+    sf::Texture* backGround;
     //Game logic
     bool endGame;
 

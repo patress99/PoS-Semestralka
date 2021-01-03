@@ -1,69 +1,64 @@
 #include "Game.h"
 
 //Private functions
-void Game::initVariables()
-{
+void Game::initVariables() {
     this->window = nullptr;
+
+    this->backGround = new sf::Texture;
+
+    if (!this->backGround->loadFromFile("C:\\Users\\janci\\CLionProjects\\PoS-Semka\\assets\\bg.png")) {
+        std::cout << "Could not load bg texture" << std::endl;
+    }
 
     //Game logic
     this->endGame = false;
 }
 
-void Game::initWindow()
-{
+void Game::initWindow() {
     this->videoMode.height = 900;
     this->videoMode.width = 1600;
 
     this->window = new sf::RenderWindow(this->videoMode, "Mlaticka", sf::Style::Titlebar | sf::Style::Close);
-    window.
 
     this->window->setFramerateLimit(60);
 }
 
 void Game::initPlayers() {
-    this->hrac1 = new Hrac(50,50);
-    this->hrac2 = new Hrac(200,50);
+    this->hrac1 = new Hrac(50, 50);
+    this->hrac2 = new Hrac(200, 50);
 }
 
-void Game::initText()
-{
+void Game::initText() {
     this->uiText.setCharacterSize(24);
     this->uiText.setFillColor(sf::Color::White);
     this->uiText.setString("TEST");
 }
 
 //Constructors / Destructors
-Game::Game()
-{
+Game::Game() {
     this->initVariables();
     this->initWindow();
     this->initText();
     this->initPlayers();
 }
 
-Game::~Game()
-{
+Game::~Game() {
     delete this->window;
 }
 
 //Accessors
-const bool Game::running() const
-{
+const bool Game::running() const {
     return this->window->isOpen();
 }
 
-const bool Game::getEndGame() const
-{
+const bool Game::getEndGame() const {
     return this->endGame;
 }
 
-void Game::pollEvents()
-{
+void Game::pollEvents() {
     //Event polling
-    while (this->window->pollEvent(this->ev))
-    {
-        switch (this->ev.type)
-        {
+    while (this->window->pollEvent(this->ev)) {
+        switch (this->ev.type) {
             case sf::Event::Closed:
                 this->window->close();
                 break;
@@ -75,12 +70,10 @@ void Game::pollEvents()
     }
 }
 
-void Game::update()
-{
+void Game::update() {
     this->pollEvents();
 
-    if (this->endGame == false)
-    {
+    if (this->endGame == false) {
         //own logic
     }
 
@@ -89,14 +82,12 @@ void Game::update()
 }
 
 
-void Game::renderPlayers(sf::RenderTarget& target)
-{
+void Game::renderPlayers(sf::RenderTarget &target) {
     target.draw(hrac1->getSprite());
     target.draw(hrac2->getSprite());
 }
 
-void Game::render()
-{
+void Game::render() {
     /**
         @return void
         - clear old frame
@@ -106,6 +97,12 @@ void Game::render()
     */
 
     this->window->clear();
+
+    sf::Sprite sprite;
+    sprite.setTexture(*this->backGround);
+
+    this->window->draw(sprite);
+
 
     this->renderPlayers(*this->window);
 
