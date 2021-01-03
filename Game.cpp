@@ -15,6 +15,7 @@ void Game::initWindow()
     this->videoMode.width = 1600;
 
     this->window = new sf::RenderWindow(this->videoMode, "Mlaticka", sf::Style::Titlebar | sf::Style::Close);
+    window.
 
     this->window->setFramerateLimit(60);
 }
