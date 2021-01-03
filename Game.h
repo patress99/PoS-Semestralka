@@ -25,6 +25,10 @@ private:
     sf::Texture worldBackgroundTex;
     sf::Sprite worldBackground;
 
+    //Grass
+    sf::Texture grassTex;
+    sf::Sprite grass;
+
     //Hraci
     Hrac *winner;
 

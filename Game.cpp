@@ -11,12 +11,20 @@ void Game::initVariables() {
         exit(1);
     }
 
+    if (!this->grassTex.loadFromFile("../assets/grass.png")) {
+        std::cout << "ERROR::GAME::COULD NOT LOAD GRASS TEXTURE" << "\n";
+        exit(1);
+    }
+
     if (!this->gameFont.loadFromFile("../fonts/aAsianNinja.ttf")) {
         std::cout << "ERROR::GAME::Failed to load font" << "\n";
         exit(3);
     }
 
     this->worldBackground.setTexture(this->worldBackgroundTex);
+
+    this->grass.setTexture(this->grassTex);
+    this->grass.setPosition(sf::Vector2f(0.f, 840.f));
     this->endGame = false;
 }
 
@@ -25,6 +33,7 @@ void Game::initWindow() {
     this->videoMode.width = 1600;
 
     this->window = new sf::RenderWindow(this->videoMode, "Mlaticka", sf::Style::Titlebar | sf::Style::Close);
+
 
     this->window->setFramerateLimit(144);
     this->window->setVerticalSyncEnabled(false);
@@ -65,8 +74,8 @@ void Game::initGUI() {
 }
 
 void Game::initPlayers() {
-    this->hrac1 = new Hrac(1, "Test1", 50, this->videoMode.height - 100);
-    this->hrac2 = new Hrac(2, "Test2", this->videoMode.width - 100, this->videoMode.height - 100);
+    this->hrac1 = new Hrac(1, "Janci", 50, this->videoMode.height - 100);
+    this->hrac2 = new Hrac(2, "Jurci", this->videoMode.width - 100, this->videoMode.height - 100);
 }
 
 
@@ -143,7 +152,9 @@ void Game::renderPlayers() {
 
 void Game::renderWorld() {
     this->window->draw(this->worldBackground);
+    this->window->draw(this->grass);
 }
+
 
 void Game::updateCollision() {
     //Out of bounds hrac1

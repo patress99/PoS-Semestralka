@@ -19,7 +19,7 @@ void startGame() {
 int main()
 {
     std::srand(static_cast<unsigned>(time(NULL)));
-    sf::RenderWindow window(sf::VideoMode(600, 600), "Mlaticka_menu");
+    sf::RenderWindow window(sf::VideoMode(600, 600), "Mlaticka menu");
     Menu menu;
     menu.mainMenu(window.getSize().x, window.getSize().y);
 
@@ -38,10 +38,12 @@ int main()
                     switch (event.key.code)
                     {
                         case sf::Keyboard::Up:
+                            menu.playSound("switch.ogg");
                             menu.MoveUp();
                             break;
 
                         case sf::Keyboard::Down:
+                            menu.playSound("switch.ogg");
                             menu.MoveDown();
                             break;
 
@@ -50,14 +52,18 @@ int main()
                             {
 
                                 case 0:
+                                    menu.playSound("select.ogg");
                                     if (menu.GetCurrentMenu() == 0) {
                                         menu.secondMenu(window.getSize().x, window.getSize().y, event);
                                     } else {
+                                        window.close();
                                         startGame();
+
                                     }
 
                                     break;
                                 case 1:
+                                    menu.playSound("select.ogg");
                                     if (menu.GetCurrentMenu() == 0) {
                                         window.close();
                                     } else {
