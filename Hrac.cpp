@@ -1,31 +1,96 @@
 #include <iostream>
 #include "Hrac.h"
 
-
-sf::Sprite& Hrac::getSprite() {
-    return this->sprite;
-}
-
-void Hrac::setHealth(int health) {
-    this->health = health;
-}
-
-const int Hrac::getHealth() {
-    return this->health;
-}
-
 Hrac::~Hrac() {
 
 }
 
-Hrac::Hrac(float spawnX, float spawnY) {
-    this->health = 100;
+Hrac::Hrac(int player, std::string name, float spawnX, float spawnY) {
 
-    if (!texture.loadFromFile("C:\\Users\\janci\\CLionProjects\\PoS-Semka\\assets\\hrac.png")) {
-        std::cout << "Could not load player texture" << std::endl;
+    this->name = name;
+    this->maxHealth = 100;
+    this->health = this->maxHealth;
+    this->movementSpeed = 2.f;
+    this->attackCooldownMax = 50.f;
+    this->attackCooldown = this->attackCooldownMax;
+
+    if (player == 1) {
+        if (!texture.loadFromFile("../assets/hrac1.png")) {
+            std::cout << "Could not load player1 texture" << std::endl;
+            exit(2);
+        }
+    } else if (player == 2) {
+        if (!texture.loadFromFile("../assets/hrac2.png")) {
+            std::cout << "Could not load player2 texture" << std::endl;
+            exit(2);
+        }
     }
 
     this->sprite.setTexture(texture);
-    this->sprite.setPosition(spawnX,spawnY);
+    this->sprite.setPosition(spawnX, spawnY);
 
+}
+
+const bool Hrac::canAttack() {
+    if (this->attackCooldown >= this->attackCooldownMax) {
+        this->attackCooldown = 0.f;
+        return true;
+    }
+
+    return false;
+}
+
+void Hrac::move(const float dirX, const float dirY) {
+    this->sprite.move(this->movementSpeed * dirX, this->movementSpeed * dirY);
+}
+
+void Hrac::loseHp(const int value) {
+    this->health -= value;
+    if (this->health < 0)
+        this->health = 0;
+}
+
+void Hrac::setPosition(const float x, const float y) {
+    this->sprite.setPosition(x, y);
+}
+
+void Hrac::setPosition(const sf::Vector2f pos) {
+    this->sprite.setPosition(pos);
+}
+
+const sf::FloatRect Hrac::getBounds() const {
+    return this->sprite.getGlobalBounds();
+}
+
+const sf::Vector2f &Hrac::getPos() const {
+    return this->sprite.getPosition();
+}
+
+void Hrac::updateAttack() {
+    if (this->attackCooldown < this->attackCooldownMax)
+        this->attackCooldown += 0.5f;
+}
+
+void Hrac::update() {
+    this->updateAttack();
+}
+
+void Hrac::render(sf::RenderTarget &target) {
+    target.draw(this->sprite);
+}
+
+const int Hrac::getHealth() const {
+    return this->health;
+}
+
+const int Hrac::getMaxHealth() const {
+    return this->maxHealth;
+}
+
+void Hrac::setHealth(const int health) {
+    this->health = health;
+}
+
+const std::string Hrac::getName() const {
+    return this->name;
 }
