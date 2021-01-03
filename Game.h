@@ -12,46 +12,49 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 
-/*
-	Class that acts as the game engine.
-	Wrapper class.
-*/
-
-class Game
-{
+class Game {
 private:
-    //Variables
-    //Window
-    sf::RenderWindow* window;
+    //Okno + riadenie
+    sf::RenderWindow *window;
     sf::VideoMode videoMode;
     sf::Event ev;
 
-    //Text
-    sf::Text uiText;
+    sf::Font gameFont;
 
-    //Background
-    sf::Texture backGround;
+    //BG
+    sf::Texture worldBackgroundTex;
+    sf::Sprite worldBackground;
+
+    //Hraci
+    Hrac *winner;
+
+    Hrac *hrac1;
+    sf::RectangleShape player1HealthBar;
+    sf::RectangleShape player1HealthBarBack;
+    sf::Text player1Name;
+
+    Hrac *hrac2;
+    sf::RectangleShape player2HealthBar;
+    sf::RectangleShape player2HealthBarBack;
+    sf::Text player2Name;
+
     //Game logic
     bool endGame;
 
-    //Game objects
-
-    Hrac* hrac1;
-    Hrac* hrac2;
-
-    //Private functions
+    //Inicializacie
     void initVariables();
+
     void initWindow();
-    void initText();
+
     void initPlayers();
 
 public:
-    //Constructors / Destructors
     Game();
+
     ~Game();
 
-    //Accessors
     const bool running() const;
+
     const bool getEndGame() const;
 
     void pollEvents();
@@ -60,5 +63,21 @@ public:
 
     void render();
 
-    void renderPlayers(sf::RenderTarget &target);
+    void renderPlayers();
+
+    void renderWorld();
+
+    void updateInput();
+
+    void updateCollision();
+
+    void updatePlayers();
+
+    void updateGUI();
+
+    void renderGui();
+
+    void initGUI();
+
+    void start();
 };
