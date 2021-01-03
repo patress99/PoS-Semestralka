@@ -10,6 +10,7 @@ void startGame() {
 
     while (game.running() && !game.getEndGame())
     {
+
         game.update();
         game.render();
     }
@@ -47,11 +48,22 @@ int main()
                         case sf::Keyboard::Return:
                             switch (menu.GetPressedItem())
                             {
+
                                 case 0:
-                                    menu.secondMenu(window.getSize().x, window.getSize().y, event);
+                                    if (menu.GetCurrentMenu() == 0) {
+                                        menu.secondMenu(window.getSize().x, window.getSize().y, event);
+                                    } else {
+                                        startGame();
+                                    }
+
                                     break;
                                 case 1:
-                                    window.close();
+                                    if (menu.GetCurrentMenu() == 0) {
+                                        window.close();
+                                    } else {
+                                        menu.mainMenu(window.getSize().x, window.getSize().y);
+                                    }
+
                                     break;
                             }
 

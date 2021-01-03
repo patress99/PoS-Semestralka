@@ -45,6 +45,8 @@ void Menu::mainMenu(float width, float height) {
         // handle error
     }
 
+    this->currentMenu = 0;
+
     menu[0].setFont(font);
     menu[0].setColor(sf::Color::Red);
     menu[0].setString("Play");
@@ -65,9 +67,11 @@ void Menu::secondMenu(float width, float height, sf::Event event) {
         // handle error
     }
 
+    this->currentMenu = 1;
+
     menu[0].setFont(font);
     menu[0].setColor(sf::Color::Red);
-    menu[0].setString("Name");
+    menu[0].setString("Start game");
     menu[0].setPosition(sf::Vector2f(10.f, height / (MAX_NUMBER_OF_ITEMS + 1) * 1));
     playerInput += event.text.unicode;
     playerText.setString(playerInput);
@@ -79,4 +83,9 @@ void Menu::secondMenu(float width, float height, sf::Event event) {
 
     selectedItemIndex = 0;
 }
+
+int Menu::GetCurrentMenu() {
+    return this->currentMenu;
+}
+
 

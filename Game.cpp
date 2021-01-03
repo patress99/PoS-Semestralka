@@ -81,6 +81,8 @@ Game::~Game() {
     delete this->window;
     delete this->hrac1;
     delete this->hrac2;
+    delete this->buffer;
+    delete this->sound;
 }
 
 
@@ -227,5 +229,10 @@ void Game::renderGui() {
 }
 
 void Game::start() {
-
+    this->buffer = new sf::SoundBuffer();
+    buffer->loadFromFile("../sounds/start.ogg");
+    this->sound = new sf::Sound();
+    sound->setBuffer(*buffer);
+    sound->setVolume(20.0f);
+    sound->play();
 }

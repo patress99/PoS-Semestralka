@@ -38,6 +38,12 @@ private:
     sf::RectangleShape player2HealthBarBack;
     sf::Text player2Name;
 
+
+    //Sound
+    sf::SoundBuffer* buffer;
+    sf::Sound* sound;
+
+
     //Game logic
     bool endGame;
 
