@@ -4,7 +4,7 @@
 void Game::initVariables() {
     this->window = nullptr;
 
-    if (!this->backGround.loadFromFile("F:\\skola\\vysoka\\3rocnik\\CLionProjects\\PoS-Semestralka\\PoS-Semestralka\\imgs\\bg.png")) {
+    if (!this->backGround.loadFromFile("C:\\Users\\janci\\CLionProjects\\PoS-Semka\\assets\\bg.png")) {
         std::cout << "Could not load bg texture" << std::endl;
     }
 
