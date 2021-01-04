@@ -57,6 +57,7 @@ int main()
                                         menu.secondMenu(window.getSize().x, window.getSize().y, event);
                                     } else {
                                         window.close();
+
                                         startGame();
 
                                     }

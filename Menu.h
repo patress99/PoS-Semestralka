@@ -1,6 +1,7 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include <SFML/Audio.hpp>
+#include <iostream>
 
 #define MAX_NUMBER_OF_ITEMS 2
 
@@ -14,8 +15,13 @@ private:
 
     //Sound
     sf::SoundBuffer* buffer;
+    sf::SoundBuffer* bufferM;
     sf::Sound* sound;
+    sf::Sound* mainTheme;
 
+    //Background
+    sf::Texture backgroundTex;
+    sf::Sprite background;
 
     sf::Font font;
     sf::Text menu[MAX_NUMBER_OF_ITEMS];
@@ -34,4 +40,6 @@ public:
     int GetCurrentMenu();
 
     void playSound(sf::String string);
+
+    void playMusic(sf::String string);
 };
