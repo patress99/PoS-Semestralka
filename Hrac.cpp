@@ -11,7 +11,7 @@ Hrac::Hrac(int player, std::string name, float spawnX, float spawnY) {
     this->maxHealth = 100;
     this->health = this->maxHealth;
     this->movementSpeed = 5.f;
-    this->attackCooldownMax = 50.f;
+    this->attackCooldownMax = 30.f;
     this->attackCooldown = this->attackCooldownMax;
     this->player = player;
     if (this->player == 1) {

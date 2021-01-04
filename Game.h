@@ -77,6 +77,8 @@ public:
 
     void renderWorld();
 
+    void renderEnd();
+
     void updateInput();
 
     void updateCollision();
@@ -89,5 +91,5 @@ public:
 
     void initGUI();
 
-    void start();
+    void playSound(sf::String string);
 };

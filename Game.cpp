@@ -35,7 +35,13 @@ void Game::initWindow() {
     this->videoMode.width = 1600;
 
     this->window = new sf::RenderWindow(this->videoMode, "Mlaticka", sf::Style::Titlebar | sf::Style::Close);
+    sf::Image image;
+    if (!image.loadFromFile("../assets/mlaticka.png")) {
+        std::cout << "ERROR::GAME::COULD NOT LOAD ICON" << "\n";
+        exit(1);
+    }
 
+    this->window->setIcon(image.getSize().x,image.getSize().y,image.getPixelsPtr());
 
     this->window->setFramerateLimit(144);
     this->window->setVerticalSyncEnabled(false);
@@ -82,6 +88,8 @@ void Game::initPlayers() {
 
 
 Game::Game() {
+    this->buffer = new sf::SoundBuffer();
+    this->sound = new sf::Sound();
     this->initVariables();
     this->initWindow();
     this->initPlayers();
@@ -102,6 +110,7 @@ const bool Game::running() const {
 }
 
 const bool Game::getEndGame() const {
+
     return this->endGame;
 }
 
@@ -116,6 +125,7 @@ void Game::pollEvents() {
                 if (this->ev.key.code == sf::Keyboard::Escape)
                     this->window->close();
                 break;
+
         }
     }
 }
@@ -127,19 +137,24 @@ void Game::update() {
     this->updateCollision();
     this->updateGUI();
 
-    this->pollEvents();
+
 
     if (this->endGame == false) {
         if (this->hrac1->getHealth() <= 0) {
             this->winner = hrac2;
             this->endGame = true;
+            playSound("vyhralProtivnik.wav");
+
         }
 
         if (this->hrac2->getHealth() <= 0) {
             this->winner = hrac1;
             this->endGame = true;
+            playSound("vyhralHrac.wav");
         }
     }
+
+
 
 }
 
@@ -186,6 +201,10 @@ void Game::updateGUI() {
 
     this->player1HealthBar.setSize(sf::Vector2f(300.f * percentage1, this->player1HealthBar.getSize().y));
     this->player2HealthBar.setSize(sf::Vector2f(300.f * percentage2, this->player2HealthBar.getSize().y));
+
+
+
+
 }
 
 void Game::updateInput() {
@@ -205,11 +224,15 @@ void Game::updateInput() {
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->hrac1->canAttack()) {
         //Utok hraca 1
         this->hrac1->updateTexture("hrac1utok.png");
+
         if (abs(this->hrac1->getPos().x-this->hrac2->getPos().x) < 90) {
-            this->hrac2->loseHp(50);
+            this->hrac2->loseHp(20);
+            playSound("au.wav");
+        } else {
+            playSound("empty-hit.wav");
         }
 
-        this->hrac1->updateTexture("hrac1.png");
+        //this->hrac1->updateTexture("hrac1.png");
 
 
     }
@@ -217,8 +240,12 @@ void Game::updateInput() {
     if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && this->hrac2->canAttack()) {
         //Utok hraca 2
         this->hrac2->updateTexture("hrac2utok.png");
+
         if (abs(this->hrac1->getPos().x-this->hrac2->getPos().x) < 90) {
-            this->hrac1->loseHp(50);
+            this->hrac1->loseHp(20);
+            playSound("au.wav");
+        } else {
+            playSound("empty-hit.wav");
         }
         //this->hrac2->updateTexture("hrac2.png");
     }
@@ -230,8 +257,11 @@ void Game::render() {
 
     this->renderWorld();
     this->renderPlayers();
-
     this->renderGui();
+
+    if (this->endGame == true) {
+        this->renderEnd();
+    }
 
     this->window->display();
 }
@@ -249,12 +279,24 @@ void Game::renderGui() {
     this->window->draw(this->player1HealthBarBack);
     this->window->draw(this->player2HealthBar);
     this->window->draw(this->player2HealthBarBack);
+
 }
 
-void Game::start() {
-    this->buffer = new sf::SoundBuffer();
-    buffer->loadFromFile("../sounds/start.ogg");
-    this->sound = new sf::Sound();
+void Game::renderEnd() {
+    sf::Text winnerName;
+    winnerName.setPosition(sf::Vector2f((window->getSize().x / 2) - 100, window->getSize().y /2));
+    winnerName.setFont(this->gameFont);
+    winnerName.setCharacterSize(35);
+    winnerName.setFillColor(sf::Color::Green);
+    winnerName.setString("Vyhral hrac " + this->winner->getName());
+
+
+    this->window->draw(winnerName);
+
+}
+
+void Game::playSound(sf::String string) {
+    buffer->loadFromFile("../sounds/" + string);
     sound->setBuffer(*buffer);
     sound->setVolume(20.0f);
     sound->play();
