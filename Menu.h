@@ -3,7 +3,7 @@
 #include <SFML/Audio.hpp>
 #include <iostream>
 
-#define MAX_NUMBER_OF_ITEMS 2
+#define MAX_NUMBER_OF_ITEMS 3
 
 
 

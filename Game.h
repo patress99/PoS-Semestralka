@@ -5,12 +5,16 @@
 #include<ctime>
 #include<sstream>
 #include "Hrac.h"
+#include "Server.h"
+#include "Client.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
+
+
 
 class Game {
 private:
@@ -29,6 +33,13 @@ private:
     sf::Texture grassTex;
     sf::Sprite grass;
 
+    //Socket
+    sf::TcpSocket socket;
+
+    //Client/Server
+    Server* server;
+    Client* client;
+
     //Hraci
     Hrac *winner;
 
@@ -41,6 +52,10 @@ private:
     sf::RectangleShape player2HealthBar;
     sf::RectangleShape player2HealthBarBack;
     sf::Text player2Name;
+
+    //Player type
+    char playerType;
+
 
 
     //Sound
@@ -56,7 +71,7 @@ private:
 
     void initWindow();
 
-    void initPlayers();
+
 
 public:
     Game();
@@ -66,6 +81,12 @@ public:
     const bool running() const;
 
     const bool getEndGame() const;
+
+    void setPlayerType(char type);
+
+    void initPlayers(int player);
+
+    char getPlayerType();
 
     void pollEvents();
 
@@ -81,6 +102,8 @@ public:
 
     void updateInput();
 
+    void updateOnlineGame(sf::Vector2f pos);
+
     void updateCollision();
 
     void updatePlayers();
@@ -92,4 +115,6 @@ public:
     void initGUI();
 
     void playSound(sf::String string);
+
+    Hrac getPlayer();
 };

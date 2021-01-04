@@ -106,6 +106,13 @@ void Menu::secondMenu(float width, float height, sf::Event event) {
     menu[1].setString("Back");
     //menu[1].setPosition(sf::Vector2f(10.f, height / (MAX_NUMBER_OF_ITEMS + 1) * 2));
     menu[1].setPosition(sf::Vector2f(10.f, 100 * 2));
+
+    menu[2].setFont(font);
+    menu[2].setFillColor(sf::Color::White);
+    menu[2].setString("Join");
+    menu[2].setPosition(sf::Vector2f(10.f, 100 * 3));
+
+
     selectedItemIndex = 0;
 }
 

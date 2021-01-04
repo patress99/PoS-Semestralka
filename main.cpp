@@ -3,21 +3,33 @@
 #include "Game.h"
 #include "Menu.h"
 
-void startGame() {
+void startGame(char type) {
     Game game;
     game.playSound("start.ogg");
+
+    sf::Vector2f pos;
+    game.setPlayerType(type);
+    if (type == 's') {
+        game.initPlayers(1);
+    } else {
+        game.initPlayers(2);
+    }
+
 
 
     while (game.running() )
     {
         if (!game.getEndGame()) {
+
+            pos = game.getPlayer().getPos();
             game.update();
+            game.updateOnlineGame(pos);
         }
         game.pollEvents();
         game.render();
     }
 
-    //startGame();
+
 
 
 
@@ -72,7 +84,7 @@ int main()
                                         menu.secondMenu(window.getSize().x, window.getSize().y, event);
                                     } else {
                                         window.close();
-                                        startGame();
+                                        startGame('s');
 
                                     }
 
@@ -83,6 +95,16 @@ int main()
                                         window.close();
                                     } else {
                                         menu.mainMenu(window.getSize().x, window.getSize().y);
+                                    }
+
+                                    break;
+                                case 2:
+                                    menu.playSound("select.ogg");
+                                    if (menu.GetCurrentMenu() == 0) {
+                                        window.close();
+                                    } else {
+                                        window.close();
+                                        startGame('c');
                                     }
 
                                     break;
@@ -115,3 +137,6 @@ int main()
 
     return 0;
 }
+
+
+

@@ -1,5 +1,3 @@
-#include <unistd.h>
-#include <future>
 #include "Game.h"
 
 //Private functions
@@ -81,9 +79,14 @@ void Game::initGUI() {
 
 }
 
-void Game::initPlayers() {
-    this->hrac1 = new Hrac(1, "Janci", 50, this->videoMode.height - 100);
-    this->hrac2 = new Hrac(2, "Jurci", this->videoMode.width - 100, this->videoMode.height - 100);
+void Game::initPlayers(int player) {
+    //if (player == 1) {
+        this->hrac1 = new Hrac(1, "Janci", 50, this->videoMode.height - 100);
+    //} else {
+        this->hrac2 = new Hrac(2, "Jurci", this->videoMode.width - 100, this->videoMode.height - 100);
+    //}
+
+
 }
 
 
@@ -92,7 +95,7 @@ Game::Game() {
     this->sound = new sf::Sound();
     this->initVariables();
     this->initWindow();
-    this->initPlayers();
+    //this->initPlayers(1);
     this->initGUI();
 }
 
@@ -102,6 +105,10 @@ Game::~Game() {
     delete this->hrac2;
     delete this->buffer;
     delete this->sound;
+
+
+    delete this->server;
+    delete this->client;
 }
 
 
@@ -301,3 +308,54 @@ void Game::playSound(sf::String string) {
     sound->setVolume(20.0f);
     sound->play();
 }
+
+void Game::setPlayerType(char type) {
+    this->playerType = type;
+    if (this->playerType == 's') {
+        this->server = new Server(this->socket);
+    } else {
+        this->client = new Client(this->socket);
+    }
+}
+
+char Game::getPlayerType() {
+    return this->playerType;
+}
+
+void Game::updateOnlineGame(sf::Vector2f pos) {
+
+    sf::Packet packet;
+
+    if (this->playerType == 's') {
+
+        if (pos != this->hrac1->getPos()) {
+            packet << this->hrac1->getPos().x << this->hrac1->getPos().y;
+
+        }
+    } else if (this->playerType == 'c') {
+
+
+        if (pos != this->hrac2->getPos()) {
+            packet << this->hrac2->getPos().x << this->hrac2->getPos().y;
+
+        }
+    }
+    socket.receive(packet);
+
+    sf::Vector2f position;
+
+    if (packet >> position.x >> position.y) {
+        this->hrac2->setPosition(position);
+    }
+
+
+}
+
+Hrac Game::getPlayer() {
+    if (this->playerType == 's') {
+        return *this->hrac1;
+    } else {
+        return *this->hrac2;
+    }
+}
+
