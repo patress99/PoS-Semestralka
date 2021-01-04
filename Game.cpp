@@ -1,3 +1,5 @@
+#include <unistd.h>
+#include <future>
 #include "Game.h"
 
 //Private functions
@@ -139,9 +141,6 @@ void Game::update() {
         }
     }
 
-    if (this->endGame == true) {
-        //TODO: Hrac1 / Hrac 2 zomrel - ohlas koniec hry
-    }
 }
 
 
@@ -205,10 +204,23 @@ void Game::updateInput() {
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->hrac1->canAttack()) {
         //Utok hraca 1
+        this->hrac1->updateTexture("hrac1utok.png");
+        if (abs(this->hrac1->getPos().x-this->hrac2->getPos().x) < 90) {
+            this->hrac2->loseHp(50);
+        }
+
+        this->hrac1->updateTexture("hrac1.png");
+
+
     }
 
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && this->hrac1->canAttack()) {
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && this->hrac2->canAttack()) {
         //Utok hraca 2
+        this->hrac2->updateTexture("hrac2utok.png");
+        if (abs(this->hrac1->getPos().x-this->hrac2->getPos().x) < 90) {
+            this->hrac1->loseHp(50);
+        }
+        //this->hrac2->updateTexture("hrac2.png");
     }
 }
 

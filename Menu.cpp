@@ -124,6 +124,6 @@ void Menu::playSound(sf::String string) {
 void Menu::playMusic(sf::String string) {
     bufferM->loadFromFile("../sounds/" + string);
     mainTheme->setBuffer(*bufferM);
-    mainTheme->setVolume(10.0f);
+    mainTheme->setVolume(1.0f);
     mainTheme->play();
 }

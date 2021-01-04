@@ -6,6 +6,7 @@ class Hrac {
 private:
     std::string name;
     float movementSpeed;
+    int player;
 
     float attackCooldown;
     float attackCooldownMax;
@@ -35,6 +36,8 @@ public:
 
     void move(const float dirX, const float dirY);
     const bool canAttack();
+
+    void updateTexture(sf::String string);
 
     void updateAttack();
     void update();

@@ -10,16 +10,16 @@ Hrac::Hrac(int player, std::string name, float spawnX, float spawnY) {
     this->name = name;
     this->maxHealth = 100;
     this->health = this->maxHealth;
-    this->movementSpeed = 2.f;
+    this->movementSpeed = 5.f;
     this->attackCooldownMax = 50.f;
     this->attackCooldown = this->attackCooldownMax;
-
-    if (player == 1) {
+    this->player = player;
+    if (this->player == 1) {
         if (!texture.loadFromFile("../assets/hrac1.png")) {
             std::cout << "Could not load player1 texture" << std::endl;
             exit(2);
         }
-    } else if (player == 2) {
+    } else if (this->player == 2) {
         if (!texture.loadFromFile("../assets/hrac2.png")) {
             std::cout << "Could not load player2 texture" << std::endl;
             exit(2);
@@ -66,6 +66,7 @@ const sf::Vector2f &Hrac::getPos() const {
     return this->sprite.getPosition();
 }
 
+
 void Hrac::updateAttack() {
     if (this->attackCooldown < this->attackCooldownMax)
         this->attackCooldown += 0.5f;
@@ -93,4 +94,21 @@ void Hrac::setHealth(const int health) {
 
 const std::string Hrac::getName() const {
     return this->name;
+}
+
+void Hrac::updateTexture(sf::String string) {
+    if (this->player == 1) {
+        if (!texture.loadFromFile("../assets/" + string)) {
+            std::cout << "Could not load player1 texture" << std::endl;
+            exit(2);
+        }
+    } else if (this->player == 2) {
+        if (!texture.loadFromFile("../assets/" + string)) {
+            std::cout << "Could not load player2 texture" << std::endl;
+            exit(2);
+        }
+    }
+
+    this->sprite.setTexture(texture,true);
+
 }
