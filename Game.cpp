@@ -397,7 +397,7 @@ void Game::isGameReady() {
 
         do {
             this->client->tryToConnect();
-            std::cout << "Klient caka na server" << std::endl;
+            std::cout << "Client caka na server" << std::endl;
             if (this->socket->connect(this->client->getIp(),PORT) == (this->socket->Done))
                 ready = true;
 
