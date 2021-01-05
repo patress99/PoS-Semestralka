@@ -4,24 +4,13 @@
 
 using namespace std;
 
-const int PORT = 10022;
 
 
-Server::Server(sf::TcpSocket& socket) {
-    sf::IpAddress ip = sf::IpAddress::getLocalAddress();
-    char connType;
-    char buffer[2000];
+Server::Server(int port) {
+    this->ip = sf::IpAddress::getLocalAddress();
+    this->port = port;
 
 
-    size_t received;
-
-    sf::TcpListener listener;
-    listener.listen(PORT);
-    listener.accept(socket);
-
-    socket.connect(ip,PORT);
-
-    system("pause");
 
 }
 
@@ -29,8 +18,21 @@ Server::~Server() {
 
 }
 
+
+
+
 sf::TcpSocket& Server::getSocket() {
     return this->socket;
+}
+
+sf::IpAddress Server::getIp() {
+    return this->ip;
+}
+
+void Server::listenToConnection() {
+    listener.listen(this->port);
+    listener.accept(this->socket);
+    this->socket.connect(this->ip,this->port);
 }
 
 

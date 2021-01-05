@@ -7,13 +7,23 @@ class Server {
 private:
 
     sf::TcpSocket socket;
+    sf::IpAddress ip;
+    sf::TcpListener listener;
+
+    int port;
 
 public:
 
-    Server(sf::TcpSocket& socket);
+    Server(int port);
     ~Server();
 
     sf::TcpSocket& getSocket();
+    sf::IpAddress getIp();
+
+
+    void listenToConnection();
+
+
 
 };
 

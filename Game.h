@@ -14,7 +14,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 
-
+const int PORT = 10022;
 
 class Game {
 private:
@@ -34,11 +34,12 @@ private:
     sf::Sprite grass;
 
     //Socket
-    sf::TcpSocket socket;
+    sf::TcpSocket* socket;
 
     //Client/Server
     Server* server;
     Client* client;
+
 
     //Hraci
     Hrac *winner;
@@ -84,7 +85,7 @@ public:
 
     void setPlayerType(char type);
 
-    void initPlayers(int player);
+    void initPlayers();
 
     char getPlayerType();
 
@@ -115,6 +116,8 @@ public:
     void initGUI();
 
     void playSound(sf::String string);
+
+    void isGameReady();
 
     Hrac getPlayer();
 };

@@ -7,13 +7,10 @@ void startGame(char type) {
     Game game;
     game.playSound("start.ogg");
 
-    sf::Vector2f pos;
     game.setPlayerType(type);
-    if (type == 's') {
-        game.initPlayers(1);
-    } else {
-        game.initPlayers(2);
-    }
+
+    game.isGameReady();
+
 
 
 
@@ -21,9 +18,8 @@ void startGame(char type) {
     {
         if (!game.getEndGame()) {
 
-            pos = game.getPlayer().getPos();
             game.update();
-            game.updateOnlineGame(pos);
+            //game.updateOnlineGame(pos);
         }
         game.pollEvents();
         game.render();

@@ -79,23 +79,25 @@ void Game::initGUI() {
 
 }
 
-void Game::initPlayers(int player) {
-    //if (player == 1) {
+void Game::initPlayers() {
+
+    if (this->playerType == 's') {
         this->hrac1 = new Hrac(1, "Janci", 50, this->videoMode.height - 100);
-    //} else {
         this->hrac2 = new Hrac(2, "Jurci", this->videoMode.width - 100, this->videoMode.height - 100);
-    //}
-
-
+    } else {
+        this->hrac1 = new Hrac(2, "Jurci", this->videoMode.width - 100, this->videoMode.height - 100);
+        this->hrac2 = new Hrac(1, "Janci", 50, this->videoMode.height - 100);
+    }
 }
 
 
 Game::Game() {
     this->buffer = new sf::SoundBuffer();
     this->sound = new sf::Sound();
+
     this->initVariables();
     this->initWindow();
-    //this->initPlayers(1);
+    this->initPlayers();
     this->initGUI();
 }
 
@@ -106,7 +108,7 @@ Game::~Game() {
     delete this->buffer;
     delete this->sound;
 
-
+    delete this->socket;
     delete this->server;
     delete this->client;
 }
@@ -215,6 +217,14 @@ void Game::updateGUI() {
 }
 
 void Game::updateInput() {
+
+    sf::Vector2f prevPos, hrac2Pos;
+    prevPos = this->hrac1->getPos();
+
+
+    socket->setBlocking(false);
+
+
     //Move player
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
         this->hrac1->move(-1.f, 0.f);
@@ -222,10 +232,10 @@ void Game::updateInput() {
         this->hrac1->move(1.f, 0.f);
 
     //Move player2
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+/*    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         this->hrac2->move(-1.f, 0.f);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        this->hrac2->move(1.f, 0.f);
+        this->hrac2->move(1.f, 0.f);*/
 
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->hrac1->canAttack()) {
@@ -244,7 +254,7 @@ void Game::updateInput() {
 
     }
 
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && this->hrac2->canAttack()) {
+/*    if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && this->hrac2->canAttack()) {
         //Utok hraca 2
         this->hrac2->updateTexture("hrac2utok.png");
 
@@ -255,7 +265,22 @@ void Game::updateInput() {
             playSound("empty-hit.wav");
         }
         //this->hrac2->updateTexture("hrac2.png");
+    }*/
+
+
+    sf::Packet packet;
+
+    if (prevPos != this->hrac1->getPos()) {
+        packet << this->hrac1->getPos().x << this->hrac1->getPos().y;
+        socket->send(packet);
     }
+
+    socket->receive(packet);
+
+    if (packet >> hrac2Pos.x >> hrac2Pos.y) {
+        this->hrac2->setPosition(hrac2Pos);
+    }
+
 }
 
 void Game::render() {
@@ -312,9 +337,13 @@ void Game::playSound(sf::String string) {
 void Game::setPlayerType(char type) {
     this->playerType = type;
     if (this->playerType == 's') {
-        this->server = new Server(this->socket);
+        this->server = new Server(PORT);
+        this->socket = &server->getSocket();
+        std::cout << "Server vytvoreny" << std::endl;
     } else {
-        this->client = new Client(this->socket);
+        this->client = new Client(PORT);
+        this->socket = &client->getSocket();
+        std::cout << "Client vytvoreny" << std::endl;
     }
 }
 
@@ -340,7 +369,7 @@ void Game::updateOnlineGame(sf::Vector2f pos) {
 
         }
     }
-    socket.receive(packet);
+    socket->receive(packet);
 
     sf::Vector2f position;
 
@@ -358,4 +387,25 @@ Hrac Game::getPlayer() {
         return *this->hrac2;
     }
 }
+
+void Game::isGameReady() {
+    bool ready = false;
+    if (this->playerType == 's') {
+        this->server->listenToConnection();
+
+    } else {
+
+        do {
+            this->client->tryToConnect();
+            std::cout << "Klient caka na server" << std::endl;
+            if (this->socket->connect(this->client->getIp(),PORT) == (this->socket->Done))
+                ready = true;
+
+        } while(!ready);
+    }
+
+
+
+}
+
 
