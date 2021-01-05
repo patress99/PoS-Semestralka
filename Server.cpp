@@ -9,9 +9,18 @@ using namespace std;
 Server::Server(int port) {
     this->ip = sf::IpAddress::getLocalAddress();
     this->port = port;
+    std::cout << &this->socket<< std::endl;
+    std::cout << this->socket.getRemotePort() << std::endl;
+    std::cout << this->socket.getRemoteAddress()<< std::endl;
 
+    listener.listen(this->port);
+    listener.accept(socket);
 
+    std::cout << "Server sa spojil" << std::endl;
 
+    std::cout << &this->socket<< std::endl;
+    std::cout << this->socket.getRemotePort() << std::endl;
+    std::cout << this->socket.getRemoteAddress()<< std::endl;
 }
 
 Server::~Server() {
@@ -30,9 +39,7 @@ sf::IpAddress Server::getIp() {
 }
 
 void Server::listenToConnection() {
-    listener.listen(this->port);
-    listener.accept(this->socket);
-    this->socket.connect(this->ip,this->port);
+
 }
 
 

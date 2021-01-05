@@ -41,7 +41,7 @@ void Game::initWindow() {
 
     this->window->setIcon(image.getSize().x,image.getSize().y,image.getPixelsPtr());
 
-    this->window->setFramerateLimit(144);
+    this->window->setFramerateLimit(60);
     this->window->setVerticalSyncEnabled(false);
 }
 
@@ -51,26 +51,26 @@ void Game::initGUI() {
     this->player1Name.setPosition(sf::Vector2f(20.f, 50.f));
     this->player1Name.setFont(this->gameFont);
     this->player1Name.setCharacterSize(35);
-    this->player1Name.setFillColor(sf::Color::Red);
+    this->player1Name.setFillColor(sf::Color::Blue);
     this->player1Name.setString(this->hrac1->getName());
 
     this->player2Name.setPosition(sf::Vector2f(this->videoMode.width - 320.f, 50.f));
     this->player2Name.setFont(this->gameFont);
     this->player2Name.setCharacterSize(35);
-    this->player2Name.setFillColor(sf::Color::Blue);
+    this->player2Name.setFillColor(sf::Color::Red);
     this->player2Name.setString(this->hrac2->getName());
 
 
     //Healthbars
     this->player1HealthBar.setSize(sf::Vector2f(300.f, 25.f));
-    this->player1HealthBar.setFillColor(sf::Color::Red);
+    this->player1HealthBar.setFillColor(sf::Color::Blue);
     this->player1HealthBar.setPosition(sf::Vector2f(20.f, 20.f));
 
     this->player1HealthBarBack = this->player1HealthBar;
     this->player1HealthBarBack.setFillColor(sf::Color(25, 25, 25, 200));
 
     this->player2HealthBar.setSize(sf::Vector2f(300.f, 25.f));
-    this->player2HealthBar.setFillColor(sf::Color::Blue);
+    this->player2HealthBar.setFillColor(sf::Color::Red);
     this->player2HealthBar.setPosition(sf::Vector2f(this->videoMode.width - 320.f, 20.f));
 
     this->player2HealthBarBack = this->player2HealthBar;
@@ -94,11 +94,10 @@ void Game::initPlayers() {
 Game::Game() {
     this->buffer = new sf::SoundBuffer();
     this->sound = new sf::Sound();
+    this->ip = sf::IpAddress::getLocalAddress();
+    this->playable = true;
 
-    this->initVariables();
-    this->initWindow();
-    this->initPlayers();
-    this->initGUI();
+
 }
 
 Game::~Game() {
@@ -108,7 +107,7 @@ Game::~Game() {
     delete this->buffer;
     delete this->sound;
 
-    delete this->socket;
+    //delete this->socket;
     delete this->server;
     delete this->client;
 }
@@ -129,6 +128,12 @@ void Game::pollEvents() {
         switch (this->ev.type) {
             case sf::Event::Closed:
                 this->window->close();
+                break;
+            case sf::Event::GainedFocus:
+                this->playable = true;
+                break;
+            case sf::Event::LostFocus:
+                this->playable = false;
                 break;
             case sf::Event::KeyPressed:
                 if (this->ev.key.code == sf::Keyboard::Escape)
@@ -218,41 +223,58 @@ void Game::updateGUI() {
 
 void Game::updateInput() {
 
+    sf::Packet packet;
+
     sf::Vector2f prevPos, hrac2Pos;
+    int healthH2, healthHrac;
+
+    healthH2 = this->hrac2->getHealth();
     prevPos = this->hrac1->getPos();
 
+    std::cout << "HP PACKET : "<< healthH2 << std::endl;
+    std::cout << "HP REAL : "<< this->hrac2->getHealth() << std::endl;
 
-    socket->setBlocking(false);
+    socket.setBlocking(false);
+
+    if (this->playable) {
 
 
-    //Move player
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-        this->hrac1->move(-1.f, 0.f);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-        this->hrac1->move(1.f, 0.f);
+        //Move player
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            this->hrac1->move(-1.f, 0.f);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            this->hrac1->move(1.f, 0.f);
 
-    //Move player2
+        //Move player2
 /*    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         this->hrac2->move(-1.f, 0.f);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
         this->hrac2->move(1.f, 0.f);*/
 
 
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->hrac1->canAttack()) {
-        //Utok hraca 1
-        this->hrac1->updateTexture("hrac1utok.png");
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->hrac1->canAttack()) {
+            //Utok hraca 1
+            if (this->playerType == 's') {
+                this->hrac1->updateTexture("hrac1utok.png");
 
-        if (abs(this->hrac1->getPos().x-this->hrac2->getPos().x) < 90) {
-            this->hrac2->loseHp(20);
-            playSound("au.wav");
-        } else {
-            playSound("empty-hit.wav");
+            } else {
+                this->hrac1->updateTexture("hrac2utok.png");
+            }
+
+
+
+            if (abs(this->hrac1->getPos().x-this->hrac2->getPos().x) < 90) {
+                this->hrac2->loseHp(20);
+
+
+                playSound("au.wav");
+            } else {
+                playSound("empty-hit.wav");
+            }
+
+            //this->hrac1->updateTexture("hrac1.png");
+
         }
-
-        //this->hrac1->updateTexture("hrac1.png");
-
-
-    }
 
 /*    if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && this->hrac2->canAttack()) {
         //Utok hraca 2
@@ -268,18 +290,42 @@ void Game::updateInput() {
     }*/
 
 
-    sf::Packet packet;
+    }
+
+    std::cout << "HP PACKET : "<< healthH2 << std::endl;
+    std::cout << "HP REAL : "<< this->hrac2->getHealth() << std::endl;
+
+/*    if (healthH2 != this->hrac2->getHealth()) {
+        packetHp << this->hrac2->getHealth();
+        socket.send(packetHp);
+    }
+
+    socket.receive(packetHp);
+    if (packetHp >> healthHrac) {
+        if (healthHrac != this->hrac1->getHealth()) {
+            this->hrac1->setHealth(healthHrac);
+        }
+
+    }
+
+
+
+
 
     if (prevPos != this->hrac1->getPos()) {
-        packet << this->hrac1->getPos().x << this->hrac1->getPos().y;
-        socket->send(packet);
-    }
+        packetPos << this->hrac1->getPos().x << this->hrac1->getPos().y;
+        socket.send(packetPos);
+    }*/
 
-    socket->receive(packet);
+    packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->hrac2->getHealth();
+    socket.send(packet);
 
-    if (packet >> hrac2Pos.x >> hrac2Pos.y) {
+    socket.receive(packet);
+    if (packet >> hrac2Pos.x >> hrac2Pos.y >> healthHrac) {
         this->hrac2->setPosition(hrac2Pos);
+        this->hrac1->setHealth(healthHrac);
     }
+
 
 }
 
@@ -336,15 +382,24 @@ void Game::playSound(sf::String string) {
 
 void Game::setPlayerType(char type) {
     this->playerType = type;
-    if (this->playerType == 's') {
-        this->server = new Server(PORT);
-        this->socket = &server->getSocket();
+
+    std::cout << "Game : " << &this->socket<< std::endl;
+    std::cout << "Game : " << this->socket.getRemotePort() << std::endl;
+    std::cout << "Game : " << this->socket.getRemoteAddress()<< std::endl;
+    if (type == 's') {
+        //this->server = serverSide();
+        //this->socket = &server->getSocket();
+        serverSide();
         std::cout << "Server vytvoreny" << std::endl;
     } else {
-        this->client = new Client(PORT);
-        this->socket = &client->getSocket();
+        //this->client = new Client(PORT);
+        //this->socket = &client->getSocket();
+        clientSide();
         std::cout << "Client vytvoreny" << std::endl;
     }
+    std::cout << "Game : " << &this->socket<< std::endl;
+    std::cout << "Game : " << this->socket.getRemotePort() << std::endl;
+    std::cout << "Game : " << this->socket.getRemoteAddress()<< std::endl;
 }
 
 char Game::getPlayerType() {
@@ -369,7 +424,7 @@ void Game::updateOnlineGame(sf::Vector2f pos) {
 
         }
     }
-    socket->receive(packet);
+    socket.receive(packet);
 
     sf::Vector2f position;
 
@@ -389,23 +444,89 @@ Hrac Game::getPlayer() {
 }
 
 void Game::isGameReady() {
+
+
+
     bool ready = false;
     if (this->playerType == 's') {
-        this->server->listenToConnection();
+        //this->server->listenToConnection();
+        //this->socket = &this->server->getSocket();
+        std::cout << "GameREADY : " << &this->socket<< std::endl;
+        std::cout << "GameREADY : " << &this->socket<< std::endl;
 
+        //std::cout << "GameREADY : " << &this->server->getSocket()<< std::endl;
+        //std::cout << "GameREADY : " << &this->server->getSocket()<< std::endl;
     } else {
 
         do {
-            this->client->tryToConnect();
+            //this->client->tryToConnect();
+            clientSide();
             std::cout << "Client caka na server" << std::endl;
-            if (this->socket->connect(this->client->getIp(),PORT) == (this->socket->Done))
+            //if (this->socket.connect(this->client->getIp(),PORT) == (this->socket.Done)) {
+            if (this->socket.connect(this->ip,PORT) == (this->socket.Done)) {
+                std::cout << "Client sa spojil so serverom" << std::endl;
                 ready = true;
+            }
+
 
         } while(!ready);
     }
 
 
+}
 
+void Game::init() {
+    this->initVariables();
+    this->initWindow();
+    this->initPlayers();
+    this->initGUI();
 }
 
 
+
+void Game::serverSide() {
+
+    std::cout << &this->socket<< std::endl;
+    std::cout << this->socket.getRemotePort() << std::endl;
+    std::cout << this->socket.getRemoteAddress()<< std::endl;
+
+    listener.listen(PORT);
+    listener.accept(this->socket);
+    std::cout << "Server sa spojil" << std::endl;
+
+    std::cout << &this->socket<< std::endl;
+    std::cout << this->socket.getRemotePort() << std::endl;
+    std::cout << this->socket.getRemoteAddress()<< std::endl;
+
+}
+
+void Game::clientSide() {
+    this->socket.connect(this->ip,PORT);
+}
+
+sf::TcpSocket &Game::getSocket() {
+    return this->socket;
+}
+
+void Game::testMessage() {
+
+
+
+    std::cout << this->playerType << " : " << this->socket.getRemoteAddress() << std::endl;
+    std::cout << this->playerType << " : " <<this->socket.getRemotePort() << std::endl;
+
+
+    char data[100];
+    size_t received;
+    std::string txt;
+    txt = "GOD";
+    socket.send(txt.c_str(),txt.length()+1);
+    socket.receive(data, sizeof(data), received);
+
+    std::cout << "Received " << data << " bytes" << std::endl;
+
+
+
+
+
+}

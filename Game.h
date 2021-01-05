@@ -14,7 +14,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 
-const int PORT = 10022;
+const int PORT = 2000;
 
 class Game {
 private:
@@ -34,7 +34,9 @@ private:
     sf::Sprite grass;
 
     //Socket
-    sf::TcpSocket* socket;
+    sf::TcpSocket socket;
+    sf::TcpListener listener;
+    sf::IpAddress ip;
 
     //Client/Server
     Server* server;
@@ -57,7 +59,7 @@ private:
     //Player type
     char playerType;
 
-
+    bool playable;
 
     //Sound
     sf::SoundBuffer* buffer;
@@ -119,5 +121,15 @@ public:
 
     void isGameReady();
 
+    void init();
+
     Hrac getPlayer();
+
+    void serverSide();
+
+    void clientSide();
+
+    sf::TcpSocket& getSocket();
+
+    void testMessage();
 };

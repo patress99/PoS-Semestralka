@@ -4,18 +4,28 @@
 #include "Menu.h"
 
 void startGame(char type) {
+
     Game game;
     game.playSound("start.ogg");
 
+    std::cout << "Main : "<< &game.getSocket() << std::endl;
+
     game.setPlayerType(type);
+    game.testMessage();
 
-    game.isGameReady();
+    game.init();
 
+    //game.isGameReady();
+
+    std::cout << "Main : "<< &game.getSocket() << std::endl;
 
 
 
     while (game.running() )
     {
+
+
+
         if (!game.getEndGame()) {
 
             game.update();
