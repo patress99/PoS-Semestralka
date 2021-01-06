@@ -5,8 +5,6 @@
 #include<ctime>
 #include<sstream>
 #include "Hrac.h"
-#include "Server.h"
-#include "Client.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -37,11 +35,6 @@ private:
     sf::TcpSocket socket;
     sf::TcpListener listener;
     sf::IpAddress ip;
-
-    //Client/Server
-    Server* server;
-    Client* client;
-
 
     //Hraci
     Hrac *winner;

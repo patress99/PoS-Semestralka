@@ -8,8 +8,6 @@ void startGame(char type) {
     Game game;
     game.playSound("start.ogg");
 
-    std::cout << "Main : "<< &game.getSocket() << std::endl;
-
     game.setPlayerType(type);
     game.testMessage();
 
@@ -17,14 +15,8 @@ void startGame(char type) {
 
     //game.isGameReady();
 
-    std::cout << "Main : "<< &game.getSocket() << std::endl;
-
-
-
     while (game.running() )
     {
-
-
 
         if (!game.getEndGame()) {
 
@@ -35,16 +27,12 @@ void startGame(char type) {
         game.render();
     }
 
-
-
-
-
 }
 
 int main()
 {
     std::srand(static_cast<unsigned>(time(NULL)));
-    sf::RenderWindow window(sf::VideoMode(600, 600), "Mlaticka menu");
+    sf::RenderWindow window(sf::VideoMode(600, 600), "Mlaticka");
 
     sf::Image image;
     if (!image.loadFromFile("../assets/mlaticka.png")) {
@@ -134,11 +122,6 @@ int main()
 
         window.display();
     }
-
-
-
-
-
 
 
     return 0;
