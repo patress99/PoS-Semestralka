@@ -18,6 +18,7 @@ void startGame(char type) {
         if (!game.getEndGame()) {
 
             game.update();
+
         }
 
         game.pollEvents();

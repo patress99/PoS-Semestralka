@@ -31,7 +31,6 @@ private:
     //sf::TcpSocket socket;
     //sf::TcpListener listener;
 
-
     sf::UdpSocket socket;
     sf::IpAddress ip;
     unsigned short port;
@@ -97,6 +96,8 @@ public:
     void updatePlayers();
 
     void updateGUI();
+
+    void updateOnlineGame();
 
     void renderGui();
 
