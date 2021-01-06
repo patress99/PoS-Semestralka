@@ -42,10 +42,7 @@ int main()
 
     window.setIcon(image.getSize().x,image.getSize().y,image.getPixelsPtr());
     Menu menu;
-    menu.mainMenu(window.getSize().x, window.getSize().y);
-
-
-
+    menu.mainMenu();
 
     while (window.isOpen())
     {
@@ -75,7 +72,7 @@ int main()
                                 case 0:
                                     menu.playSound("select.ogg");
                                     if (menu.GetCurrentMenu() == 0) {
-                                        menu.secondMenu(window.getSize().x, window.getSize().y, event);
+                                        menu.secondMenu(event);
                                     } else {
                                         window.close();
                                         startGame('s');
@@ -88,7 +85,7 @@ int main()
                                     if (menu.GetCurrentMenu() == 0) {
                                         window.close();
                                     } else {
-                                        menu.mainMenu(window.getSize().x, window.getSize().y);
+                                        menu.mainMenu();
                                     }
 
                                     break;
