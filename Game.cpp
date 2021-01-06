@@ -261,7 +261,7 @@ void Game::updateInput() {
         }
     }
 
-    packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->hrac2->getHealth();
+    packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->hrac2->getHealth() ;
 
 /*
 
@@ -275,23 +275,19 @@ void Game::updateInput() {
     }
 */
 
+    socket.send(packet, rIp, rPort);
 
-    if (this->playerType == 's') {
-        if (socket.send(packet, rIp, rPort) != sf::Socket::Done) {
-            std::cout << "Socket Server Error" << std::endl;
-        }
-    } else {
-        sf::IpAddress tempIp;
-        unsigned short tempPort;
+    socket.receive(packet, rIp, rPort);
 
-        if (socket.receive(packet, tempIp, tempPort) != sf::Socket::Done) {
-            std::cout << "Socket Client Error" << std::endl;
-        }
-        if (packet >> hrac2Pos.x >> hrac2Pos.y >> healthHrac) {
-            this->hrac2->setPosition(hrac2Pos);
-            this->hrac1->setHealth(healthHrac);
-        }
+
+    if (packet >> hrac2Pos.x >> hrac2Pos.y >> healthHrac ) {
+        this->hrac1->setHealth(healthHrac);
+        this->hrac2->setPosition(hrac2Pos);
+
     }
+
+
+
 }
 
 void Game::render() {
@@ -412,9 +408,12 @@ void Game::clientSide() {
     //this->socket.connect(this->ip,PORT);
 
     sf::IpAddress sendIP(this->ip.getLocalAddress());
+
+    this->rIp = sendIP;
+    this->rPort = 2000;
     std::string txt = "Connection established!";
 
-    if (socket.send(txt.c_str(), txt.length() + 1, sendIP, 2000) != sf::Socket::Done) {
+    if (socket.send(txt.c_str(), txt.length() + 1, this->rIp, this->rPort) != sf::Socket::Done) {
         std::cout << "Socket error" << std::endl;
     }
 }
