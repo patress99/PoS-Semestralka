@@ -60,7 +60,7 @@ void Menu::MoveDown()
     }
 }
 
-void Menu::mainMenu(float width, float height) {
+void Menu::mainMenu() {
     if (!font.loadFromFile("../fonts/aAsianNinja.ttf"))
     {
         // handle error
@@ -83,7 +83,7 @@ void Menu::mainMenu(float width, float height) {
     selectedItemIndex = 0;
 }
 
-void Menu::secondMenu(float width, float height, sf::Event event) {
+void Menu::secondMenu(sf::Event event) {
     sf::String playerInput;
     sf::Text playerText;
     if (!font.loadFromFile("../fonts/aAsianNinja.ttf"))

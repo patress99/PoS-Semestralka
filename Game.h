@@ -4,7 +4,7 @@
 #include<vector>
 #include<ctime>
 #include<sstream>
-#include "Hrac.h"
+#include "Player.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -15,58 +15,50 @@
 
 class Game {
 private:
-    //Okno + riadenie
+
     sf::RenderWindow *window;
     sf::VideoMode videoMode;
     sf::Event ev;
 
     sf::Font gameFont;
 
-    //BG
     sf::Texture worldBackgroundTex;
     sf::Sprite worldBackground;
 
-    //Grass
     sf::Texture grassTex;
     sf::Sprite grass;
 
-    //Socket
     //sf::TcpSocket socket;
+    //sf::TcpListener listener;
+
+
     sf::UdpSocket socket;
-    sf::TcpListener listener;
     sf::IpAddress ip;
     unsigned short port;
 
     sf::IpAddress rIp;
     unsigned short rPort;
 
-    //Hraci
-    Hrac *winner;
+    Player *winner;
 
-    Hrac *hrac1;
+    Player *hrac1;
     sf::RectangleShape player1HealthBar;
     sf::RectangleShape player1HealthBarBack;
     sf::Text player1Name;
 
-    Hrac *hrac2;
+    Player *hrac2;
     sf::RectangleShape player2HealthBar;
     sf::RectangleShape player2HealthBarBack;
     sf::Text player2Name;
 
-    //Player type
     char playerType;
 
     bool playable;
-
-    //Sound
     sf::SoundBuffer* buffer;
     sf::Sound* sound;
 
-
-    //Game logic
     bool endGame;
 
-    //Inicializacie
     void initVariables();
 
     void initWindow();
@@ -86,8 +78,6 @@ public:
 
     void initPlayers();
 
-    char getPlayerType();
-
     void pollEvents();
 
     void update();
@@ -102,8 +92,6 @@ public:
 
     void updateInput();
 
-    void updateOnlineGame(sf::Vector2f pos);
-
     void updateCollision();
 
     void updatePlayers();
@@ -116,15 +104,10 @@ public:
 
     void playSound(sf::String string);
 
-    void isGameReady();
-
     void init();
-
-    Hrac getPlayer();
 
     void serverSide();
 
     void clientSide();
 
-    void testMessage();
 };

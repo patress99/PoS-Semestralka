@@ -30,8 +30,8 @@ public:
     Menu();
     ~Menu();
 
-    void mainMenu(float width, float height);
-    void secondMenu(float width, float height, sf::Event event);
+    void mainMenu();
+    void secondMenu(sf::Event event);
     void draw(sf::RenderWindow &window);
 
     void MoveUp();

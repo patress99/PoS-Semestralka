@@ -9,11 +9,8 @@ void startGame(char type) {
     game.playSound("start.ogg");
 
     game.setPlayerType(type);
-    game.testMessage();
 
     game.init();
-
-    //game.isGameReady();
 
     while (game.running() )
     {
@@ -21,8 +18,8 @@ void startGame(char type) {
         if (!game.getEndGame()) {
 
             game.update();
-            //game.updateOnlineGame(pos);
         }
+
         game.pollEvents();
         game.render();
     }
@@ -32,13 +29,16 @@ void startGame(char type) {
 int main()
 {
     std::srand(static_cast<unsigned>(time(NULL)));
+
     sf::RenderWindow window(sf::VideoMode(600, 600), "Mlaticka");
 
     sf::Image image;
+
     if (!image.loadFromFile("../assets/mlaticka.png")) {
         std::cout << "ERROR::GAME::COULD NOT LOAD ICON" << "\n";
         exit(1);
     }
+
 
     window.setIcon(image.getSize().x,image.getSize().y,image.getPixelsPtr());
     Menu menu;

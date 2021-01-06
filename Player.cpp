@@ -1,11 +1,11 @@
 #include <iostream>
-#include "Hrac.h"
+#include "Player.h"
 
-Hrac::~Hrac() {
+Player::~Player() {
 
 }
 
-Hrac::Hrac(int player, std::string name, float spawnX, float spawnY) {
+Player::Player(int player, std::string name, float spawnX, float spawnY) {
 
     this->name = name;
     this->maxHealth = 100;
@@ -31,7 +31,7 @@ Hrac::Hrac(int player, std::string name, float spawnX, float spawnY) {
 
 }
 
-const bool Hrac::canAttack() {
+const bool Player::canAttack() {
     if (this->attackCooldown >= this->attackCooldownMax) {
         this->attackCooldown = 0.f;
         return true;
@@ -40,63 +40,63 @@ const bool Hrac::canAttack() {
     return false;
 }
 
-void Hrac::move(const float dirX, const float dirY) {
+void Player::move(const float dirX, const float dirY) {
     this->sprite.move(this->movementSpeed * dirX, this->movementSpeed * dirY);
 }
 
-void Hrac::loseHp(const int value) {
+void Player::loseHp(const int value) {
     this->health -= value;
     if (this->health < 0)
         this->health = 0;
 }
 
-void Hrac::setPosition(const float x, const float y) {
+void Player::setPosition(const float x, const float y) {
     this->sprite.setPosition(x, y);
 }
 
-void Hrac::setPosition(const sf::Vector2f pos) {
+void Player::setPosition(const sf::Vector2f pos) {
     this->sprite.setPosition(pos);
 }
 
-const sf::FloatRect Hrac::getBounds() const {
+const sf::FloatRect Player::getBounds() const {
     return this->sprite.getGlobalBounds();
 }
 
-const sf::Vector2f &Hrac::getPos() const {
+const sf::Vector2f &Player::getPos() const {
     return this->sprite.getPosition();
 }
 
 
-void Hrac::updateAttack() {
+void Player::updateAttack() {
     if (this->attackCooldown < this->attackCooldownMax)
         this->attackCooldown += 0.5f;
 }
 
-void Hrac::update() {
+void Player::update() {
     this->updateAttack();
 }
 
-void Hrac::render(sf::RenderTarget &target) {
+void Player::render(sf::RenderTarget &target) {
     target.draw(this->sprite);
 }
 
-const int Hrac::getHealth() const {
+const int Player::getHealth() const {
     return this->health;
 }
 
-const int Hrac::getMaxHealth() const {
+const int Player::getMaxHealth() const {
     return this->maxHealth;
 }
 
-void Hrac::setHealth(const int health) {
+void Player::setHealth(const int health) {
     this->health = health;
 }
 
-const std::string Hrac::getName() const {
+const std::string Player::getName() const {
     return this->name;
 }
 
-void Hrac::updateTexture(sf::String string) {
+void Player::updateTexture(sf::String string) {
     if (this->player == 1) {
         if (!texture.loadFromFile("../assets/" + string)) {
             std::cout << "Could not load player1 texture" << std::endl;

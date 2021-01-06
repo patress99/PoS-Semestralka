@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
-class Hrac {
+class Player {
 
 private:
     std::string name;
@@ -19,8 +19,8 @@ private:
 
 public:
 
-    ~Hrac();
-    Hrac(int player, std::string name, float spawnX, float spawnY);
+    ~Player();
+    Player(int player, std::string name, float spawnX, float spawnY);
 
     const sf::Vector2f& getPos() const;
     const sf::FloatRect getBounds() const;
