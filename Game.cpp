@@ -87,11 +87,11 @@ void Game::initGUI() {
 void Game::initPlayers() {
 
     if (this->playerType == 's') {
-        this->hrac1 = new Player(1, "Janci", 50, this->videoMode.height - 100);
-        this->hrac2 = new Player(2, "Jurci", this->videoMode.width - 100, this->videoMode.height - 100);
+        this->hrac1 = new Player(1, "Player 1", 50, this->videoMode.height - 100);
+        this->hrac2 = new Player(2, "Player 2 ", this->videoMode.width - 100, this->videoMode.height - 100);
     } else {
-        this->hrac1 = new Player(2, "Jurci", this->videoMode.width - 100, this->videoMode.height - 100);
-        this->hrac2 = new Player(1, "Janci", 50, this->videoMode.height - 100);
+        this->hrac1 = new Player(2, "Player 2", this->videoMode.width - 100, this->videoMode.height - 100);
+        this->hrac2 = new Player(1, "Player 1", 50, this->videoMode.height - 100);
     }
 }
 
