@@ -12,7 +12,6 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 
-const int PORT = 2000;
 
 class Game {
 private:
@@ -36,7 +35,7 @@ private:
     sf::UdpSocket socket;
     sf::TcpListener listener;
     sf::IpAddress ip;
-    //unsigned short port;
+    unsigned short port;
 
     sf::IpAddress rIp;
     unsigned short rPort;

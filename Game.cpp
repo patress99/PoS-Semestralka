@@ -99,7 +99,7 @@ void Game::initPlayers() {
 Game::Game() {
     this->buffer = new sf::SoundBuffer();
     this->sound = new sf::Sound();
-    this->ip = sf::IpAddress::getPublicAddress();
+    this->ip = sf::IpAddress::getLocalAddress();
 
     this->playable = true;
     this->initVariables();
@@ -405,11 +405,14 @@ void Game::playSound(sf::String string) {
 void Game::setPlayerType(char type) {
     this->playerType = type;
 
-    socket.bind(PORT);
+
 
     if (type == 's') {
         //this->server = serverSide();
         //this->socket = &server->getSocket();
+        this->port = 2000;
+
+        socket.bind(this->port);
 
         std::cout << this->ip << std::endl;
 
@@ -419,6 +422,10 @@ void Game::setPlayerType(char type) {
     } else {
         //this->client = new Client(PORT);
         //this->socket = &client->getSocket();
+        this->port = 2001;
+
+        socket.bind(this->port);
+
         clientSide();
         std::cout << "Client vytvoreny" << std::endl;
     }
@@ -518,7 +525,6 @@ void Game::serverSide() {
     char buffeer[2000];
     size_t received;
 
-    this->rPort = PORT;
 
     do {
         std::cout << "SERVER STUCK!!!" << std::endl;
@@ -526,7 +532,7 @@ void Game::serverSide() {
         socket.receive(buffeer, sizeof(buffeer), received, rIp, rPort);
 
         std::cout << "SERVER STUCK!!!" << std::endl;
-    } while(received < 0);
+    } while(received <= 0);
 
 
 
@@ -537,7 +543,11 @@ void Game::clientSide() {
     //this->socket.connect(this->ip,PORT);
 
     //UDP
-    sf::IpAddress sendIP(this->ip.getPublicAddress());
+
+    sf::IpAddress sendIP(this->ip.getLocalAddress());
+    std::string txt = "Connection estabilished!";
+
+    socket.send(txt.c_str(),txt.length()+1,sendIP,2000);
 }
 
 void Game::testMessage() {
