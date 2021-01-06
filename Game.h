@@ -32,9 +32,14 @@ private:
     sf::Sprite grass;
 
     //Socket
-    sf::TcpSocket socket;
+    //sf::TcpSocket socket;
+    sf::UdpSocket socket;
     sf::TcpListener listener;
     sf::IpAddress ip;
+    //unsigned short port;
+
+    sf::IpAddress rIp;
+    unsigned short rPort;
 
     //Hraci
     Hrac *winner;
@@ -121,8 +126,6 @@ public:
     void serverSide();
 
     void clientSide();
-
-    sf::TcpSocket& getSocket();
 
     void testMessage();
 };

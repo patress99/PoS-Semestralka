@@ -99,7 +99,8 @@ void Game::initPlayers() {
 Game::Game() {
     this->buffer = new sf::SoundBuffer();
     this->sound = new sf::Sound();
-    this->ip = sf::IpAddress::getLocalAddress();
+    this->ip = sf::IpAddress::getPublicAddress();
+
     this->playable = true;
     this->initVariables();
 
@@ -320,6 +321,8 @@ void Game::updateInput() {
 
 
     packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->hrac2->getHealth();
+/*
+
     socket.send(packet);
 
     socket.receive(packet);
@@ -327,6 +330,23 @@ void Game::updateInput() {
         this->hrac2->setPosition(hrac2Pos);
         this->hrac1->setHealth(healthHrac);
     }
+*/
+
+
+    if (this->playerType == 's') {
+        socket.send(packet,rIp,rPort);
+
+    } else {
+        sf::IpAddress tempIp;
+        unsigned short tempPort;
+        socket.receive(packet,tempIp,tempPort);
+        if (packet >> hrac2Pos.x >> hrac2Pos.y >> healthHrac) {
+            this->hrac2->setPosition(hrac2Pos);
+            this->hrac1->setHealth(healthHrac);
+        }
+    }
+
+
 
 
 }
@@ -385,11 +405,17 @@ void Game::playSound(sf::String string) {
 void Game::setPlayerType(char type) {
     this->playerType = type;
 
+    socket.bind(PORT);
+
     if (type == 's') {
         //this->server = serverSide();
         //this->socket = &server->getSocket();
-        serverSide();
+
+        std::cout << this->ip << std::endl;
+
         std::cout << "Server vytvoreny" << std::endl;
+        serverSide();
+
     } else {
         //this->client = new Client(PORT);
         //this->socket = &client->getSocket();
@@ -442,6 +468,7 @@ Hrac Game::getPlayer() {
 
 void Game::isGameReady() {
 
+/*
 
 
     bool ready = false;
@@ -468,6 +495,7 @@ void Game::isGameReady() {
 
         } while(!ready);
     }
+*/
 
 
 }
@@ -481,37 +509,69 @@ void Game::init() {
 
 
 void Game::serverSide() {
-    listener.listen(PORT);
+    //TCP
+ /*   listener.listen(PORT);
     listener.accept(this->socket);
-    std::cout << "Server sa spojil s clientom" << std::endl;
+    std::cout << "Server sa spojil s clientom" << std::endl;*/
+
+    //UDP
+    char buffeer[2000];
+    size_t received;
+
+    this->rPort = PORT;
+
+    do {
+        std::cout << "SERVER STUCK!!!" << std::endl;
+
+        socket.receive(buffeer, sizeof(buffeer), received, rIp, rPort);
+
+        std::cout << "SERVER STUCK!!!" << std::endl;
+    } while(received < 0);
+
+
+
 }
 
 void Game::clientSide() {
-    this->socket.connect(this->ip,PORT);
-}
+    //TCP
+    //this->socket.connect(this->ip,PORT);
 
-sf::TcpSocket &Game::getSocket() {
-    return this->socket;
+    //UDP
+    sf::IpAddress sendIP(this->ip.getPublicAddress());
 }
 
 void Game::testMessage() {
-
-
-
-    std::cout << this->playerType << " : " << this->socket.getRemoteAddress() << std::endl;
-    std::cout << this->playerType << " : " <<this->socket.getRemotePort() << std::endl;
-
 
     char data[100];
     size_t received;
     std::string txt;
     txt = "GOD";
-    socket.send(txt.c_str(),txt.length()+1);
+
+
+    if (this->playerType == 's') {
+        socket.send(txt.c_str(), txt.length() + 1,rIp,rPort);
+
+    } else {
+        sf::IpAddress tempIp;
+        unsigned short tempPort;
+        socket.receive(data, sizeof(data),received,tempIp,tempPort);
+        if (received > 0) {
+            std::cout << "Received : " << data << std::endl;
+
+        }
+    }
+
+
+/*
+
+    socket.send(txt.c_str(),txt.length()+1,);
+
     socket.receive(data, sizeof(data), received);
 
     std::cout << "Received : " << data << std::endl;
 
 
+*/
 
 
 
