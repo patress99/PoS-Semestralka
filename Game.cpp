@@ -257,21 +257,6 @@ void Game::updateInput() {
     }
 
 
-
-/*
-
- TCP:
-    socket.send(packet);
-
-    socket.receive(packet);
-    if (packet >> hrac2Pos.x >> hrac2Pos.y >> healthHrac) {
-        this->hrac2->setPosition(hrac2Pos);
-        this->hrac1->setHealth(healthHrac);
-    }
-*/
-
-
-
 }
 
 void Game::render() {
@@ -331,10 +316,14 @@ void Game::setPlayerType(char type) {
 
         this->port = 2000;
 
+
+        //UDP
+/*
         if (socket.bind(this->port) != sf::Socket::Done) {
             std::cout << "Socket Server Error: Unable to bind to port " << this->port << std::endl;
         }
 
+*/
 
 
         serverSide();
@@ -345,9 +334,12 @@ void Game::setPlayerType(char type) {
 
         this->port = 2001;
 
+        //UDP
+/*
         if (socket.bind(this->port) != sf::Socket::Done) {
             std::cout << "Socket Client Error: Unable to bind to port " << this->port << std::endl;
         }
+*/
 
 
 
@@ -371,11 +363,11 @@ void Game::init() {
 void Game::serverSide() {
     //TCP
 
-    /*
-    listener.listen(PORT);
+    listener.listen(this->port);
     listener.accept(this->socket);
     std::cout << "Server sa spojil s clientom" << std::endl;
-    */
+
+/*
 
     char buffer[2000];
     size_t received;
@@ -386,15 +378,18 @@ void Game::serverSide() {
         }
     } while (received <= 0);
 
+*/
 
 }
 
 void Game::clientSide() {
     //TCP
-    //this->socket.connect(this->ip,PORT);
+    this->socket.connect(this->ip,2000);
 
-    //sf::IpAddress sendIP("25.85.55.6");
-    sf::IpAddress sendIP(this->ip.getLocalAddress());
+
+    //UDP
+/*    sf::IpAddress sendIP("25.85.55.6");
+    //sf::IpAddress sendIP(this->ip.getLocalAddress());
 
 
     this->rIp = sendIP;
@@ -404,6 +399,8 @@ void Game::clientSide() {
     if (socket.send(txt.c_str(), txt.length() + 1, this->rIp, this->rPort) != sf::Socket::Done) {
         std::cout << "Socket error" << std::endl;
     }
+
+    */
 }
 
 void Game::updateOnlineGame() {
@@ -418,10 +415,18 @@ void Game::updateOnlineGame() {
 
 
     packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->hrac2->getHealth();
-    socket.send(packet, rIp, rPort);
 
 
-    socket.receive(packet, rIp, rPort);
+    //UDP
+/*
+       socket.send(packet, rIp, rPort);
+       socket.receive(packet, rIp, rPort);
+
+*/
+    //TCP
+    socket.send(packet);
+    socket.receive(packet);
+
 
     if (packet >> hrac2Pos.x >> hrac2Pos.y >> healthHrac ) {
         this->hrac1->setHealth(healthHrac);

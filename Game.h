@@ -28,10 +28,10 @@ private:
     sf::Texture grassTex;
     sf::Sprite grass;
 
-    //sf::TcpSocket socket;
-    //sf::TcpListener listener;
+    sf::TcpSocket socket;
+    sf::TcpListener listener;
 
-    sf::UdpSocket socket;
+    //sf::UdpSocket socket;
     sf::IpAddress ip;
     unsigned short port;
 
