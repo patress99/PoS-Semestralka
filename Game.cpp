@@ -231,10 +231,11 @@ void Game::updateGUI() {
 void Game::updateInput() {
 
     sf::Packet packet;
+    sf::Packet packet1;
 
 
-    sf::Vector2f prevPos, hrac2Pos;
-    int healthH2, healthHrac;
+    sf::Vector2f prevPos, hrac2Pos, hrac1Pos;
+    int healthH2, healthHrac, healthHrac1;
 
     healthH2 = this->hrac2->getHealth();
     prevPos = this->hrac1->getPos();
@@ -261,7 +262,9 @@ void Game::updateInput() {
         }
     }
 
-    packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->hrac2->getHealth() ;
+    packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->hrac2->getHealth();
+    packet1 << this->hrac2->getPos().x << this->hrac2->getPos().y << this->hrac1->getHealth();
+
 
 /*
 
@@ -276,14 +279,20 @@ void Game::updateInput() {
 */
 
     socket.send(packet, rIp, rPort);
+    socket.send(packet1, rIp, rPort);
 
     socket.receive(packet, rIp, rPort);
+    socket.receive(packet1, rIp, rPort);
 
 
     if (packet >> hrac2Pos.x >> hrac2Pos.y >> healthHrac ) {
         this->hrac1->setHealth(healthHrac);
         this->hrac2->setPosition(hrac2Pos);
+    }
 
+    if (packet1 >> hrac1Pos.x >> hrac1Pos.y >> healthHrac1 ) {
+        this->hrac2->setHealth(healthHrac);
+        this->hrac1->setPosition(hrac1Pos);
     }
 
 
