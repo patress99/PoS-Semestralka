@@ -46,7 +46,7 @@ void Game::initWindow() {
 
     this->window->setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
 
-    this->window->setFramerateLimit(60);
+    this->window->setFramerateLimit(144);
     this->window->setVerticalSyncEnabled(false);
 }
 
@@ -149,15 +149,15 @@ void Game::pollEvents() {
 }
 
 void Game::update() {
-
-    this->updateOnlineGame();
+    std::cout << "Main thread " << std::endl;
+    //this->updateOnlineGame();
 
     this->updateInput();
     this->updatePlayers();
     this->updateCollision();
     this->updateGUI();
 
-    this->updateOnlineGame();
+    //this->updateOnlineGame();
 
 
     if (this->endGame == false) {
@@ -176,7 +176,7 @@ void Game::update() {
 
     }
 
-    this->updateOnlineGame();
+    //this->updateOnlineGame();
 }
 
 
@@ -311,10 +311,11 @@ void Game::playSound(sf::String string) {
 
 void Game::setPlayerType(char type) {
     this->playerType = type;
+    this->port = 2000;
 
     if (type == 's') {
 
-        this->port = 2000;
+        //this->port = 2000;
 
 
         //UDP
@@ -332,7 +333,7 @@ void Game::setPlayerType(char type) {
 
     } else {
 
-        this->port = 2001;
+        //this->port = 2001;
 
         //UDP
 /*
@@ -357,6 +358,15 @@ void Game::init() {
     this->initWindow();
     this->initPlayers();
     this->initGUI();
+
+
+    sf::Thread* packetThread;
+    packetThread = new sf::Thread(&Game::updateOnlineGame,this);
+    packetThread->launch();
+
+
+
+
 }
 
 
@@ -410,31 +420,50 @@ void Game::updateOnlineGame() {
     sf::Vector2f prevPos, hrac2Pos;
     int healthH2, healthHrac;
 
-    healthH2 = this->hrac2->getHealth();
-    prevPos = this->hrac1->getPos();
+    while (!this->endGame) {
+        std::cout << "Packet thread " << std::endl;
+
+        socket.receive(packet);
+
+        if (packet >> hrac2Pos.x >> hrac2Pos.y >> healthHrac ) {
+            this->hrac1->setHealth(healthHrac);
+            this->hrac2->setPosition(hrac2Pos);
+
+        }
+
+        packet.clear();
 
 
-    packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->hrac2->getHealth();
 
+        packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->hrac2->getHealth();
 
-    //UDP
+        //TCP
+        socket.send(packet);
+
+        //UDP
 /*
        socket.send(packet, rIp, rPort);
        socket.receive(packet, rIp, rPort);
 
 */
-    //TCP
-    socket.send(packet);
-    socket.receive(packet);
+
+        socket.receive(packet);
+
+        if (packet >> hrac2Pos.x >> hrac2Pos.y >> healthHrac ) {
+            this->hrac1->setHealth(healthHrac);
+            this->hrac2->setPosition(hrac2Pos);
+
+        }
+
+        packet.clear();
 
 
-    if (packet >> hrac2Pos.x >> hrac2Pos.y >> healthHrac ) {
-        this->hrac1->setHealth(healthHrac);
-        this->hrac2->setPosition(hrac2Pos);
+
 
     }
-}
 
+
+}
 
 
 
