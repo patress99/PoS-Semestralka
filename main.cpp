@@ -13,7 +13,7 @@ void startGame(char type) {
     game.setPlayerType(type);
 
 
-    while (odveta == 'Y' || odveta == 'y') {
+    while ((odveta == 'Y' || odveta == 'y') ) {
         game.init();
         while (!game.getEndGame() )
         {

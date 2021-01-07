@@ -245,11 +245,7 @@ void Game::updateInput() {
             this->hrac1->move(1.f, 0.f);
 
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->hrac1->canAttack()) {
-            std::cout << this->hrac1->canAttack() << std::endl;
             this->hrac1->setAttackCooldown();
-
-
-            std::cout << this->hrac1->canAttack() << std::endl;
             if (abs(this->hrac1->getPos().x - this->hrac2->getPos().x) < 90) {
                 this->hrac2->loseHp(20);
                 playSound("au.wav");
@@ -407,6 +403,7 @@ void Game::serverSide() {
 
 void Game::clientSide() {
     //TCP
+    std::cout << "Zadaj ip servera : ";
     std::cin >> ip;
     this->socket.connect(ip,2000);
 
@@ -435,7 +432,7 @@ void Game::thUpdateOnlineGame() {
     int sound;
 
     while (!this->endGame) {
-        std::cout << "Packet thread " << std::endl;
+        std::cout << " " << std::endl;
         mutex.lock();
 
         socket.receive(packet);
@@ -467,7 +464,7 @@ void Game::thUpdateOnlineGame() {
 
         }
         packet.clear();
-
+        mutex.unlock();
 
 /*
         packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->hrac2->getHealth();
@@ -481,37 +478,6 @@ void Game::thUpdateOnlineGame() {
        socket.receive(packet, rIp, rPort);
 
 */
-
-        socket.receive(packet);
-        if (packet >> hrac2Pos.x >> hrac2Pos.y >> attacked >> sound >> healthHrac) {
-            this->hrac1->setHealth(healthHrac);
-            this->hrac2->setPosition(hrac2Pos);
-            this->player2Attacked = attacked;
-            if (attacked) {
-                if (this->playerType == 's') {
-                    this->hrac2->updateTexture("hrac2utok.png");
-                } else {
-                    this->hrac2->updateTexture("hrac1utok.png");
-
-                }
-            } else if (!attacked) {
-                if (this->playerType == 's') {
-                    this->hrac2->updateTexture("hrac2.png");
-                } else {
-                    this->hrac2->updateTexture("hrac1.png");
-
-                }
-            }
-            if (sound == 1) {
-                playSound("empty-hit.wav");
-
-            } else if (sound == 2){
-                playSound("au.wav");
-            }
-
-        }
-        packet.clear();
-        mutex.unlock();
 
 
 
