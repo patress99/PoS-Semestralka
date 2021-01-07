@@ -402,7 +402,7 @@ void Game::clientSide() {
 
         pocetPokusov++;
 
-        if (pocetPokusov >= 3) {
+        if (pocetPokusov >= 10) {
             std::cout << "Unable to connect to server" << std::endl;
             std::exit(0);
         }
