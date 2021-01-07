@@ -31,6 +31,8 @@ private:
     sf::TcpSocket socket;
     sf::TcpListener listener;
 
+    sf::Mutex mutex;
+
     //sf::UdpSocket socket;
     sf::IpAddress ip;
     unsigned short port;
@@ -44,11 +46,13 @@ private:
     sf::RectangleShape player1HealthBar;
     sf::RectangleShape player1HealthBarBack;
     sf::Text player1Name;
+    bool player1Attacked;
 
     Player *hrac2;
     sf::RectangleShape player2HealthBar;
     sf::RectangleShape player2HealthBarBack;
     sf::Text player2Name;
+    bool player2Attacked;
 
     char playerType;
 
@@ -97,7 +101,7 @@ public:
 
     void updateGUI();
 
-    void updateOnlineGame();
+
 
     void renderGui();
 
@@ -110,5 +114,9 @@ public:
     void serverSide();
 
     void clientSide();
+
+    void thUpdateOnlineGame();
+
+    void thAnimate();
 
 };

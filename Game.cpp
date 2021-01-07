@@ -149,7 +149,7 @@ void Game::pollEvents() {
 }
 
 void Game::update() {
-    std::cout << "Main thread " << std::endl;
+    //std::cout << "Main thread " << std::endl;
     //this->updateOnlineGame();
 
     this->updateInput();
@@ -237,7 +237,6 @@ void Game::updateInput() {
 
     if (this->playable) {
 
-
         //Move player
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             this->hrac1->move(-1.f, 0.f);
@@ -245,15 +244,18 @@ void Game::updateInput() {
             this->hrac1->move(1.f, 0.f);
 
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->hrac1->canAttack()) {
+            std::cout << this->hrac1->canAttack() << std::endl;
+            this->hrac1->setAttackCooldown();
 
+            std::cout << this->hrac1->canAttack() << std::endl;
             if (abs(this->hrac1->getPos().x - this->hrac2->getPos().x) < 90) {
                 this->hrac2->loseHp(20);
                 playSound("au.wav");
             } else {
                 playSound("empty-hit.wav");
             }
+            this->player1Attacked = true;
         }
-
     }
 
 
@@ -361,10 +363,12 @@ void Game::init() {
 
 
     sf::Thread* packetThread;
-    packetThread = new sf::Thread(&Game::updateOnlineGame,this);
+    packetThread = new sf::Thread(&Game::thUpdateOnlineGame,this);
     packetThread->launch();
 
-
+    sf::Thread* animThread;
+    animThread = new sf::Thread(&Game::thAnimate,this);
+    animThread->launch();
 
 
 }
@@ -413,21 +417,38 @@ void Game::clientSide() {
     */
 }
 
-void Game::updateOnlineGame() {
+void Game::thUpdateOnlineGame() {
 
     sf::Packet packet;
 
     sf::Vector2f prevPos, hrac2Pos;
+    bool attacked;
     int healthH2, healthHrac;
 
     while (!this->endGame) {
-        std::cout << "Packet thread " << std::endl;
+        //std::cout << "Packet thread " << std::endl;
 
         socket.receive(packet);
 
-        if (packet >> hrac2Pos.x >> hrac2Pos.y >> healthHrac ) {
+        if (packet >> hrac2Pos.x >> hrac2Pos.y >> attacked >> healthHrac) {
             this->hrac1->setHealth(healthHrac);
             this->hrac2->setPosition(hrac2Pos);
+            this->player2Attacked = attacked;
+            if (attacked) {
+                if (this->playerType == 's') {
+                    this->hrac2->updateTexture("hrac2utok.png");
+                } else {
+                    this->hrac2->updateTexture("hrac1utok.png");
+
+                }
+            } else if (!attacked){
+                if (this->playerType == 's') {
+                    this->hrac2->updateTexture("hrac2.png");
+                } else {
+                    this->hrac2->updateTexture("hrac1.png");
+
+                }
+            }
 
         }
 
@@ -435,7 +456,7 @@ void Game::updateOnlineGame() {
 
 
 
-        packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->hrac2->getHealth();
+        packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->player1Attacked << this->hrac2->getHealth();
 
         //TCP
         socket.send(packet);
@@ -449,9 +470,25 @@ void Game::updateOnlineGame() {
 
         socket.receive(packet);
 
-        if (packet >> hrac2Pos.x >> hrac2Pos.y >> healthHrac ) {
+        if (packet >> hrac2Pos.x >> hrac2Pos.y >> attacked >> healthHrac) {
             this->hrac1->setHealth(healthHrac);
             this->hrac2->setPosition(hrac2Pos);
+            this->player2Attacked = attacked;
+            if (attacked) {
+                if (this->playerType == 's') {
+                    this->hrac2->updateTexture("hrac2utok.png");
+                } else {
+                    this->hrac2->updateTexture("hrac1utok.png");
+
+                }
+            } else if (!attacked){
+                if (this->playerType == 's') {
+                    this->hrac2->updateTexture("hrac2.png");
+                } else {
+                    this->hrac2->updateTexture("hrac1.png");
+
+                }
+            }
 
         }
 
@@ -464,6 +501,35 @@ void Game::updateOnlineGame() {
 
 
 }
+
+void Game::thAnimate() {
+
+    while (!this->endGame) {
+        if (this->player1Attacked) {
+
+            if (this->playerType == 's') {
+                this->hrac1->updateTexture("hrac1utok.png");
+            } else {
+                this->hrac1->updateTexture("hrac2utok.png");
+
+            }
+            sf::sleep(sf::milliseconds(150));
+
+            if (this->playerType == 's') {
+                this->hrac1->updateTexture("hrac1.png");
+            } else {
+                this->hrac1->updateTexture("hrac2.png");
+            }
+            this->player1Attacked = false;
+
+        }
+
+
+    }
+
+}
+
+
 
 
 

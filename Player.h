@@ -39,6 +39,7 @@ public:
 
     void updateTexture(sf::String string);
 
+    void setAttackCooldown();
     void updateAttack();
     void update();
     void render(sf::RenderTarget& target);

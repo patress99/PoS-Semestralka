@@ -27,13 +27,13 @@ Player::Player(int player, std::string name, float spawnX, float spawnY) {
     }
 
     this->sprite.setTexture(texture);
+
     this->sprite.setPosition(spawnX, spawnY);
 
 }
 
 const bool Player::canAttack() {
     if (this->attackCooldown >= this->attackCooldownMax) {
-        this->attackCooldown = 0.f;
         return true;
     }
 
@@ -111,4 +111,8 @@ void Player::updateTexture(sf::String string) {
 
     this->sprite.setTexture(texture,true);
 
+}
+
+void Player::setAttackCooldown() {
+    this->attackCooldown = 0.f;
 }
