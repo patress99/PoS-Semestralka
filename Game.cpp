@@ -349,7 +349,6 @@ void Game::setPlayerType(char type) {
 */
 
 
-
         clientSide();
 
         std::cout << "Client Created!" << std::endl;
@@ -380,47 +379,37 @@ void Game::init() {
 
 
 void Game::serverSide() {
-    //TCP
 
     listener.listen(this->port);
+    std::cout << "Listening on port " << this->port << ". Waiting for client to connect..." << std::endl;
     listener.accept(this->socket);
-    std::cout << "Server sa spojil s clientom" << std::endl;
-
-/*
-
-    char buffer[2000];
-    size_t received;
-
-    do {
-        if (socket.receive(buffer, sizeof(buffer), received, rIp, rPort) != sf::Socket::Done) {
-            std::cout << "Socket error" << std::endl;
-        }
-    } while (received <= 0);
-
-*/
+    std::cout << "Connection with client established " << std::endl;
 
 }
 
 void Game::clientSide() {
-    //TCP
-    std::cout << "Zadaj ip servera : ";
+    std::cout << "Enter Server IP: ";
     std::cin >> ip;
-    this->socket.connect(ip,2000);
 
-    //UDP
-/*    sf::IpAddress sendIP("25.85.55.6");
-    //sf::IpAddress sendIP(this->ip.getLocalAddress());
+    sf::Socket::Status status;
 
+    int pocetPokusov = 0;
 
-    this->rIp = sendIP;
-    this->rPort = 2000;
-    std::string txt = "Connection established!";
+    do {
 
-    if (socket.send(txt.c_str(), txt.length() + 1, this->rIp, this->rPort) != sf::Socket::Done) {
-        std::cout << "Socket error" << std::endl;
-    }
+        status = this->socket.connect(ip,2000,sf::seconds(3));
+        std::cout << "Waiting for server to host game..." << std::endl;
 
-    */
+        pocetPokusov++;
+
+        if (pocetPokusov >= 3) {
+            std::cout << "Unable to connect to server" << std::endl;
+            std::exit(0);
+        }
+
+    } while(status != sf::Socket::Done);
+
+    std::cout << "Connected to server! Starting Game..." << std::endl;
 }
 
 void Game::thUpdateOnlineGame() {
