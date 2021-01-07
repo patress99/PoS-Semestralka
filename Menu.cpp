@@ -7,7 +7,22 @@ Menu::Menu() {
     playerName = "Player";
     serverIP = "localhost";
 
-    this->window = new sf::RenderWindow(sf::VideoMode(600, 600), "Mlaticka");
+    this->offsetX = 40.f;
+    this->offsetY = 100.f;
+
+    this->videoMode.height = 900;
+    this->videoMode.width = 1600;
+
+    if (!font.loadFromFile("../fonts/aAsianNinja.ttf")) {
+        // handle error
+    }
+
+
+
+    if (!this->backgroundTex.loadFromFile("../assets/mlaticka.png")) {
+        std::cout << "ERROR::GAME::COULD NOT LOAD BACKGROUND TEXTURE" << "\n";
+        exit(1);
+    }
 
     sf::Image image;
     if (!image.loadFromFile("../assets/mlaticka.png")) {
@@ -15,7 +30,15 @@ Menu::Menu() {
         exit(1);
     }
 
-    this->window->setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
+
+
+    this->window.create(this->videoMode,"Mlaticka",sf::Style::Titlebar | sf::Style::Close);
+
+
+    this->window.setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
+    this->window.setFramerateLimit(144);
+    this->window.setVerticalSyncEnabled(false);
+
 
     this->buffer = new sf::SoundBuffer();
     this->bufferM = new sf::SoundBuffer();
@@ -24,17 +47,13 @@ Menu::Menu() {
 
     playMusic("mlatC.ogg");
 
-    if (!this->backgroundTex.loadFromFile("../assets/mlaticka.png")) {
-        std::cout << "ERROR::GAME::COULD NOT LOAD BACKGROUND TEXTURE" << "\n";
-        exit(1);
-    }
+
 
     this->background.setTexture(this->backgroundTex);
-    this->background.scale(0.95f, 0.66f);
 
     this->mainMenu();
 
-    while (this->window->isOpen()) {
+    while (this->window.isOpen()) {
         this->pollEvents();
         this->renderWindow();
     }
@@ -43,7 +62,6 @@ Menu::Menu() {
 
 
 Menu::~Menu() {
-    delete this->window;
     delete this->sound;
     delete this->buffer;
     delete this->bufferM;
@@ -52,10 +70,10 @@ Menu::~Menu() {
 
 void Menu::render() {
 
-    this->window->draw(this->background);
+    this->window.draw(this->background);
 
     for (int i = 0; i < currentAmountOfItems; i++) {
-        this->window->draw(menu[i]);
+        this->window.draw(menu[i]);
     }
 
 }
@@ -63,48 +81,47 @@ void Menu::render() {
 void Menu::MoveUp() {
 
     if (selectedItemIndex - 1 >= 0) {
+        menu[selectedItemIndex].setScale(1,1);
         menu[selectedItemIndex].setFillColor(sf::Color::White);
+
         selectedItemIndex--;
         menu[selectedItemIndex].setFillColor(sf::Color::Red);
+
     }
 }
 
 void Menu::MoveDown() {
 
     if (selectedItemIndex + 1 < currentAmountOfItems) {
+        menu[selectedItemIndex].setScale(1,1);
         menu[selectedItemIndex].setFillColor(sf::Color::White);
         selectedItemIndex++;
         menu[selectedItemIndex].setFillColor(sf::Color::Red);
+
     }
 }
 
 void Menu::mainMenu() {
 
-    if (!font.loadFromFile("../fonts/aAsianNinja.ttf")) {
-        // handle error
-    }
 
-    this->currentAmountOfItems = 2;
     this->currentMenu = 0;
+    this->currentAmountOfItems = 2;
     this->selectedItemIndex = 0;
 
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::Red);
     menu[0].setString("Play");
-    menu[0].setPosition(sf::Vector2f(10.f, 100 * 1));
+    menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
+
 
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
     menu[1].setString("Exit");
-    menu[1].setPosition(sf::Vector2f(10.f, 100 * 2));
+    menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
 
 }
 
 void Menu::secondMenu() {
-    if (!font.loadFromFile("../fonts/aAsianNinja.ttf")) {
-        // handle error
-    }
-
     this->currentMenu = 1;
     this->currentAmountOfItems = 4;
     this->selectedItemIndex = 0;
@@ -112,28 +129,25 @@ void Menu::secondMenu() {
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::Red);
     menu[0].setString("Start game");
-    menu[0].setPosition(sf::Vector2f(10.f, 75 * 1));
+    menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
 
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
     menu[1].setString("Join game");
-    menu[1].setPosition(sf::Vector2f(10.f, 75 * 2));
+    menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
 
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
     menu[2].setString("Change Nickname");
-    menu[2].setPosition(sf::Vector2f(10.f, 75 * 3));
+    menu[2].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 3));
 
     menu[3].setFont(font);
     menu[3].setFillColor(sf::Color::White);
     menu[3].setString("Back");
-    menu[3].setPosition(sf::Vector2f(10.f, 75 * 4));
+    menu[3].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 4));
 }
 
 void Menu::nicknameMenu() {
-    if (!font.loadFromFile("../fonts/aAsianNinja.ttf")) {
-        // handle error
-    }
     this->currentMenu = 2;
     this->currentAmountOfItems = 2;
     this->selectedItemIndex = 0;
@@ -141,53 +155,16 @@ void Menu::nicknameMenu() {
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::Red);
     menu[0].setString("Nickname: " + playerName);
-    menu[0].setPosition(sf::Vector2f(10.f, 75 * 1));
+    menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
 
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
     menu[1].setString("Back");
-    menu[1].setPosition(sf::Vector2f(10.f, 75 * 2));
+    menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
 
-}
-
-void Menu::serverStartMenu() {
-    if (!font.loadFromFile("../fonts/aAsianNinja.ttf")) {
-        // handle error
-    }
-
-    this->currentMenu = 4;
-    this->currentAmountOfItems = 1;
-    this->selectedItemIndex = 0;
-
-    menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::White);
-    menu[0].setString("Waiting for Client to connect...");
-    menu[0].setPosition(sf::Vector2f(10.f, 10.f));
-
-    this->startGame('s', playerName, serverIP);
-}
-
-void Menu::clientStartMenu() {
-    if (!font.loadFromFile("../fonts/aAsianNinja.ttf")) {
-        // handle error
-    }
-
-    this->currentMenu = 5;
-    this->currentAmountOfItems = 1;
-    this->selectedItemIndex = 0;
-
-    menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::White);
-    menu[0].setString("Waiting for Server to host game...");
-    menu[0].setPosition(sf::Vector2f(10.f, 10.f));
-
-    this->startGame('c', playerName, serverIP);
 }
 
 void Menu::ipMenu() {
-    if (!font.loadFromFile("../fonts/aAsianNinja.ttf")) {
-        // handle error
-    }
 
     this->currentMenu = 3;
     this->currentAmountOfItems = 3;
@@ -196,18 +173,90 @@ void Menu::ipMenu() {
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::Red);
     menu[0].setString("Server IP: " + serverIP);
-    menu[0].setPosition(sf::Vector2f(10.f, 75 * 1));
+    menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
 
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
     menu[1].setString("Connect");
-    menu[1].setPosition(sf::Vector2f(10.f, 75 * 2));
+    menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
 
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
     menu[2].setString("Back");
-    menu[2].setPosition(sf::Vector2f(10.f, 75 * 3));
+    menu[2].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 3));
 }
+
+
+void Menu::serverStartMenu() {
+    window.clear();
+
+    this->currentMenu = 4;
+    this->currentAmountOfItems = 1;
+    this->selectedItemIndex = 0;
+
+    menu[0].setFont(font);
+    menu[0].setFillColor(sf::Color::White);
+    menu[0].setString("Waiting for Client to connect...");
+    menu[0].setPosition(sf::Vector2f(((float)this->window.getSize().x /2) - (menu[0].getLocalBounds().width /2 ), this->window.getSize().y /2));
+    menu[0].setScale(1,1);
+
+    window.draw(menu[0]);
+    window.display();
+
+    this->startGame('s', playerName, serverIP);
+}
+
+void Menu::clientStartMenu() {
+    window.clear();
+
+    this->currentMenu = 5;
+    this->currentAmountOfItems = 1;
+    this->selectedItemIndex = 0;
+
+    menu[0].setFont(font);
+    menu[0].setFillColor(sf::Color::White);
+    menu[0].setString("Waiting for Server to host game...");
+    menu[0].setPosition(sf::Vector2f(((float)this->window.getSize().x /2) - (menu[0].getLocalBounds().width /2 ), this->window.getSize().y /2));
+    menu[0].setScale(1,1);
+
+    window.draw(menu[0]);
+    window.display();
+
+    this->startGame('c', playerName, serverIP);
+}
+
+void Menu::revengeMenu() {
+    window.clear();
+
+    this->currentMenu = 6;
+    this->currentAmountOfItems = 2;
+    this->selectedItemIndex = 0;
+
+    sf::Text revText;
+
+    revText.setFont(font);
+    revText.setFillColor(sf::Color::White);
+    revText.setString("Odveta ? ");
+    revText.setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
+
+    menu[0].setFont(font);
+    menu[0].setFillColor(sf::Color::Red);
+    menu[0].setString("ANO");
+    menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
+
+    menu[1].setFont(font);
+    menu[1].setFillColor(sf::Color::White);
+    menu[1].setString("NIE");
+    menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 3));
+
+    window.draw(revText);
+    window.draw(menu[0]);
+    window.draw(menu[1]);
+
+    window.display();
+}
+
+
 
 int Menu::GetCurrentMenu() {
     return this->currentMenu;
@@ -228,9 +277,9 @@ void Menu::playMusic(sf::String string) {
 }
 
 void Menu::pollEvents() {
+    clearScale();
+    while (this->window.pollEvent(event)) {
 
-    sf::Event event;
-    while (this->window->pollEvent(event)) {
         switch (event.type) {
             case sf::Event::TextEntered:
                 if (selectedItemIndex == 0 && GetCurrentMenu() == 2) {
@@ -270,7 +319,7 @@ void Menu::pollEvents() {
                                     this->playSound("select.ogg");
                                     this->secondMenu();
                                 } else {
-                                    this->window->close();
+                                    this->window.close();
                                     break;
                                 }
                                 break;
@@ -309,7 +358,7 @@ void Menu::pollEvents() {
                 }
                 break;
             case sf::Event::Closed:
-                this->window->close();
+                this->window.close();
                 break;
         }
     }
@@ -317,27 +366,76 @@ void Menu::pollEvents() {
 
 void Menu::startGame(char type, sf::String playerName, sf::String serverIP) {
 
-    Game game;
+    Game game(this->window);
 
     game.setPlayerName(playerName);
-
     game.setPlayerType(type, serverIP);
 
-    this->window->close();
+    mainTheme->stop();
+
 
     game.init();
+    while (game.running()) {
+        if (!game.isEndGame()) {
+            game.update();
+            game.render();
+        }
 
-    while (game.running() && !game.isEndGame()) {
-        game.update();
         game.pollEvents();
-        game.render();
+
+
+        if (game.isEndGame()) {
+            sf::sleep(sf::seconds(3));
+            this->revengeMenu();
+
+            while (this->window.pollEvent(event)) {
+                if (event.type == sf::Event::KeyReleased) {
+
+                    switch (event.key.code) {
+                        case sf::Keyboard::Up:
+                            this->playSound("switch.ogg");
+                            this->MoveUp();
+                            break;
+                        case sf::Keyboard::Down:
+                            this->playSound("switch.ogg");
+                            this->MoveDown();
+                            break;
+                        case sf::Keyboard::Return:
+                            switch (this->GetCurrentMenu()) {
+                                case 6:
+                                    if (this->GetPressedItem() == 0) {
+                                        this->playSound("select.ogg");
+
+                                    } else {
+                                        this->window.close();
+                                        break;
+                                    }
+                                    break;
+                            }
+
+                            break;
+
+                    }
+
+                } else if (event.type ==sf::Event::Closed) {
+                    this->window.close();
+                }
+            }
+        }
     }
 
-    game.getWindow()->close();
+
 }
 
 void Menu::renderWindow() {
-    this->window->clear();
+    this->window.clear();
     this->render();
-    this->window->display();
+    this->window.display();
+}
+
+void Menu::clearScale() {
+    for (int i = 0; i < 10; ++i) {
+        menu[i].setScale(1,1);
+    }
+    menu[selectedItemIndex].setScale(2,2);
 }

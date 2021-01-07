@@ -16,8 +16,7 @@
 class Game {
 private:
 
-    sf::RenderWindow *window;
-    sf::VideoMode videoMode;
+    sf::RenderWindow& window;
     sf::Event ev;
 
     sf::Font gameFont;
@@ -44,35 +43,32 @@ private:
 
     Player *winner;
 
-    Player *hrac1;
-    sf::RectangleShape player1HealthBar;
-    sf::RectangleShape player1HealthBarBack;
-    sf::Text player1Name;
-    sf::String playerName;
-    bool player1Attacked;
+    Player *player;
+    sf::RectangleShape playerHealthBar;
+    sf::RectangleShape playerHealthBarBack;
+    sf::Text playerName;
+    bool playerAttacked;
 
-    Player *hrac2;
-    sf::RectangleShape player2HealthBar;
-    sf::RectangleShape player2HealthBarBack;
-    sf::Text player2Name;
-    bool player2Attacked;
+    Player *enemy;
+    sf::RectangleShape enemyHealthBar;
+    sf::RectangleShape enemyHealthBarBack;
+    sf::Text enemyName;
 
     char playerType;
 
     bool playable;
     sf::SoundBuffer* buffer;
+    sf::SoundBuffer* bufferM;
     sf::Sound* sound;
+    sf::Sound* battleMusic;
 
     bool endGame;
 
     void initVariables();
 
-    void initWindow();
-
-
 
 public:
-    Game();
+    Game(sf::RenderWindow& wind);
 
     ~Game();
 
@@ -104,7 +100,7 @@ public:
 
     void updateGUI();
 
-    sf::RenderWindow* getWindow();
+    sf::RenderWindow& getWindow();
 
     void renderGui();
 
@@ -125,4 +121,6 @@ public:
     void setPlayerName(sf::String string);
 
     void acceptClient();
+
+    void playMusic(sf::String string);
 };

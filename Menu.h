@@ -7,8 +7,9 @@
 class Menu
 {
 private:
-
-    sf::RenderWindow* window;
+    sf::Event event;
+    sf::RenderWindow window;
+    sf::VideoMode videoMode;
 
     sf::String playerName;
     sf::String serverIP;
@@ -16,6 +17,10 @@ private:
     int currentMenu;
     int selectedItemIndex;
     int currentAmountOfItems;
+
+    float offsetX;
+    float offsetY;
+
 
     //Sound
     sf::SoundBuffer* buffer;
@@ -57,4 +62,8 @@ private:
     void clientStartMenu();
 
     void serverStartMenu();
+
+    void revengeMenu();
+
+    void clearScale();
 };

@@ -1,8 +1,20 @@
 #include "Game.h"
 
+Game::Game(sf::RenderWindow& wind) : window(wind) {
+
+    this->buffer = new sf::SoundBuffer();
+    this->sound = new sf::Sound();
+    this->bufferM = new sf::SoundBuffer();
+    this->battleMusic = new sf::Sound();
+
+    this->ip = sf::IpAddress::getLocalAddress();
+    this->playable = true;
+
+
+}
+
 void Game::initVariables() {
 
-    this->window = nullptr;
     this->winner = nullptr;
 
     if (!this->worldBackgroundTex.loadFromFile("../assets/sky.jpg")) {
@@ -27,59 +39,70 @@ void Game::initVariables() {
     this->endGame = false;
 }
 
-void Game::initWindow() {
-    this->videoMode.height = 900;
-    this->videoMode.width = 1600;
-
-    if (this->playerType == 's') {
-        this->window = new sf::RenderWindow(this->videoMode, "Mlaticka Server", sf::Style::Titlebar | sf::Style::Close);
-    } else {
-        this->window = new sf::RenderWindow(this->videoMode, "Mlaticka Client", sf::Style::Titlebar | sf::Style::Close);
-    }
-
-    sf::Image image;
-
-    if (!image.loadFromFile("../assets/mlaticka.png")) {
-        std::cout << "ERROR::GAME::COULD NOT LOAD ICON" << "\n";
-        exit(1);
-    }
-
-    this->window->setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
-
-    this->window->setFramerateLimit(144);
-    this->window->setVerticalSyncEnabled(false);
-}
-
 void Game::initGUI() {
 
-    //Nicknames of players
-    this->player1Name.setPosition(sf::Vector2f(20.f, 50.f));
-    this->player1Name.setFont(this->gameFont);
-    this->player1Name.setCharacterSize(35);
-    this->player1Name.setFillColor(sf::Color::Blue);
-    this->player1Name.setString(this->hrac1->getName());
+    if (this->playerType == 's') {
+        //Player names
+        this->playerName.setPosition(sf::Vector2f(20.f, 50.f));
+        this->playerName.setFont(this->gameFont);
+        this->playerName.setCharacterSize(35);
+        this->playerName.setFillColor(sf::Color::Blue);
+        this->playerName.setString(this->player->getName());
 
-    this->player2Name.setPosition(sf::Vector2f(this->videoMode.width - 320.f, 50.f));
-    this->player2Name.setFont(this->gameFont);
-    this->player2Name.setCharacterSize(35);
-    this->player2Name.setFillColor(sf::Color::Red);
-    this->player2Name.setString(this->hrac2->getName());
+        this->enemyName.setPosition(sf::Vector2f(this->window.getSize().x - 320.f, 50.f));
+        this->enemyName.setFont(this->gameFont);
+        this->enemyName.setCharacterSize(35);
+        this->enemyName.setFillColor(sf::Color::Red);
+        this->enemyName.setString(this->enemy->getName());
 
 
-    //Healthbars
-    this->player1HealthBar.setSize(sf::Vector2f(300.f, 25.f));
-    this->player1HealthBar.setFillColor(sf::Color::Blue);
-    this->player1HealthBar.setPosition(sf::Vector2f(20.f, 20.f));
+        //Healthbars
+        this->playerHealthBar.setSize(sf::Vector2f(300.f, 25.f));
+        this->playerHealthBar.setFillColor(sf::Color::Blue);
+        this->playerHealthBar.setPosition(sf::Vector2f(20.f, 20.f));
 
-    this->player1HealthBarBack = this->player1HealthBar;
-    this->player1HealthBarBack.setFillColor(sf::Color(25, 25, 25, 200));
+        this->playerHealthBarBack = this->playerHealthBar;
+        this->playerHealthBarBack.setFillColor(sf::Color(25, 25, 25, 200));
 
-    this->player2HealthBar.setSize(sf::Vector2f(300.f, 25.f));
-    this->player2HealthBar.setFillColor(sf::Color::Red);
-    this->player2HealthBar.setPosition(sf::Vector2f(this->videoMode.width - 320.f, 20.f));
+        this->enemyHealthBar.setSize(sf::Vector2f(300.f, 25.f));
+        this->enemyHealthBar.setFillColor(sf::Color::Red);
+        this->enemyHealthBar.setPosition(sf::Vector2f(this->window.getSize().x - 320.f, 20.f));
 
-    this->player2HealthBarBack = this->player2HealthBar;
-    this->player2HealthBarBack.setFillColor(sf::Color(25, 25, 25, 200));
+        this->enemyHealthBarBack = this->enemyHealthBar;
+        this->enemyHealthBarBack.setFillColor(sf::Color(25, 25, 25, 200));
+    } else {
+        //Player names
+        this->playerName.setPosition(sf::Vector2f(this->window.getSize().x - 320.f, 50.f));
+        this->playerName.setFont(this->gameFont);
+        this->playerName.setCharacterSize(35);
+        this->playerName.setFillColor(sf::Color::Red);
+        this->playerName.setString(this->player->getName());
+
+        this->enemyName.setPosition(sf::Vector2f(20.f, 50.f));
+        this->enemyName.setFont(this->gameFont);
+        this->enemyName.setCharacterSize(35);
+        this->enemyName.setFillColor(sf::Color::Blue);
+        this->enemyName.setString(this->enemy->getName());
+
+
+
+
+        //Healthbars
+        this->enemyHealthBar.setSize(sf::Vector2f(300.f, 25.f));
+        this->enemyHealthBar.setFillColor(sf::Color::Blue);
+        this->enemyHealthBar.setPosition(sf::Vector2f(20.f, 20.f));
+
+        this->enemyHealthBarBack = this->enemyHealthBar;
+        this->enemyHealthBarBack.setFillColor(sf::Color(25, 25, 25, 200));
+
+        this->playerHealthBar.setSize(sf::Vector2f(300.f, 25.f));
+        this->playerHealthBar.setFillColor(sf::Color::Red);
+        this->playerHealthBar.setPosition(sf::Vector2f(this->window.getSize().x - 320.f, 20.f));
+
+        this->playerHealthBarBack = this->playerHealthBar;
+        this->playerHealthBarBack.setFillColor(sf::Color(25, 25, 25, 200));
+    }
+
 
 
 }
@@ -87,34 +110,26 @@ void Game::initGUI() {
 void Game::initPlayers() {
 
     if (this->playerType == 's') {
-        this->hrac1 = new Player(1, this->playerName, 50, this->videoMode.height - 100);
-        this->hrac2 = new Player(2, "Player 2 ", this->videoMode.width - 100, this->videoMode.height - 100);
+        this->player = new Player(1, this->playerName.getString(), 50, this->window.getSize().y - 100);
+        this->enemy = new Player(2, this->enemyName.getString(), this->window.getSize().x - 100, this->window.getSize().y - 100);
     } else {
-        this->hrac1 = new Player(2, this->playerName, this->videoMode.width - 100, this->videoMode.height - 100);
-        this->hrac2 = new Player(1, "Server", 50, this->videoMode.height - 100);
+        this->player = new Player(2, this->playerName.getString(), this->window.getSize().x - 100, this->window.getSize().y - 100);
+        this->enemy = new Player(1, this->enemyName.getString(), 50, this->window.getSize().y - 100);
     }
 }
 
-
-Game::Game() {
-    this->buffer = new sf::SoundBuffer();
-    this->sound = new sf::Sound();
-    this->ip = sf::IpAddress::getLocalAddress();
-    this->playable = true;
-}
-
-
 Game::~Game() {
-    delete this->window;
-    delete this->hrac1;
-    delete this->hrac2;
+    delete this->player;
+    delete this->enemy;
     delete this->buffer;
     delete this->sound;
+    delete this->bufferM;
+    delete this->battleMusic;
 }
 
 
 const bool Game::running() const {
-    return this->window->isOpen();
+    return this->window.isOpen();
 }
 
 const bool Game::isEndGame() const {
@@ -123,10 +138,16 @@ const bool Game::isEndGame() const {
 
 void Game::pollEvents() {
     //Event polling
-    while (this->window->pollEvent(this->ev)) {
+    while (this->window.pollEvent(this->ev)) {
         switch (this->ev.type) {
             case sf::Event::Closed:
-                this->window->close();
+                if (this->playerType == 's') {
+                    this->listener.close();
+
+                }
+                this->socket.disconnect();
+                this->window.close();
+
                 break;
             case sf::Event::GainedFocus:
                 this->playable = true;
@@ -136,7 +157,7 @@ void Game::pollEvents() {
                 break;
             case sf::Event::KeyPressed:
                 if (this->ev.key.code == sf::Keyboard::Escape)
-                    this->window->close();
+                    this->window.close();
                 break;
 
         }
@@ -144,86 +165,81 @@ void Game::pollEvents() {
 }
 
 void Game::update() {
-    //std::cout << "Main thread " << std::endl;
-    //this->updateOnlineGame();
-
     this->updateInput();
     this->updatePlayers();
     this->updateCollision();
     this->updateGUI();
 
-    //this->updateOnlineGame();
 
 
-    if (this->endGame == false) {
-        if (this->hrac1->getHealth() <= 0) {
-            this->winner = hrac2;
+    if (!this->endGame) {
+        if (this->player->getHealth() <= 0) {
+            this->winner = enemy;
             this->endGame = true;
             playSound("vyhralProtivnik.wav");
 
         }
 
-        if (this->hrac2->getHealth() <= 0) {
-            this->winner = hrac1;
+        if (this->enemy->getHealth() <= 0) {
+            this->winner = player;
             this->endGame = true;
             playSound("vyhralHrac.wav");
         }
 
     }
 
-    //this->updateOnlineGame();
 }
 
 
 void Game::renderPlayers() {
-    this->hrac1->render(*this->window);
-    this->hrac2->render(*this->window);
+    this->window.draw(this->player->getSprite());
+    this->window.draw(this->enemy->getSprite());
 }
 
 void Game::renderWorld() {
-    this->window->draw(this->worldBackground);
-    this->window->draw(this->grass);
+    this->window.draw(this->worldBackground);
+    this->window.draw(this->grass);
 }
 
 
 void Game::updateCollision() {
     //Out of bounds player1
 
-    if (this->hrac1->getBounds().left < 0.f) {
-        this->hrac1->setPosition(0.f, this->hrac1->getBounds().top);
-    } else if (this->hrac1->getBounds().left + this->hrac1->getBounds().width >= this->window->getSize().x) {
-        this->hrac1->setPosition(this->window->getSize().x - this->hrac1->getBounds().width,
-                                 this->hrac1->getBounds().top);
+    if (this->player->getBounds().left < 0.f) {
+        this->player->setPosition(0.f, this->player->getBounds().top);
+    } else if (this->player->getBounds().left + this->player->getBounds().width >= this->window.getSize().x) {
+        this->player->setPosition(this->window.getSize().x - this->player->getBounds().width,
+                                 this->player->getBounds().top);
     }
 
     //Out of bounds player2
-    if (this->hrac2->getBounds().left < 0.f) {
-        this->hrac2->setPosition(0.f, this->hrac2->getBounds().top);
-    } else if (this->hrac2->getBounds().left + this->hrac2->getBounds().width >= this->window->getSize().x) {
-        this->hrac2->setPosition(this->window->getSize().x - this->hrac2->getBounds().width,
-                                 this->hrac2->getBounds().top);
+    if (this->enemy->getBounds().left < 0.f) {
+        this->enemy->setPosition(0.f, this->enemy->getBounds().top);
+    } else if (this->enemy->getBounds().left + this->enemy->getBounds().width >= this->window.getSize().x) {
+        this->enemy->setPosition(this->window.getSize().x - this->enemy->getBounds().width,
+                                 this->enemy->getBounds().top);
     }
 
     //Collision of players
-    if (this->hrac1->getBounds().intersects(this->hrac2->getBounds()) ||
-        this->hrac2->getBounds().intersects(this->hrac1->getBounds())) {
+    if (this->player->getBounds().intersects(this->enemy->getBounds()) ||
+        this->enemy->getBounds().intersects(this->player->getBounds())) {
         if (this->playerType == 's') {
-            this->hrac1->move(-1, 0);
-            this->hrac2->move(1, 0);
+            this->player->move(-1, 0);
+            this->enemy->move(1, 0);
         } else {
-            this->hrac1->move(1, 0);
-            this->hrac2->move(-1, 0);
+            this->player->move(1, 0);
+            this->enemy->move(-1, 0);
         }
 
     }
 }
 
 void Game::updateGUI() {
-    float percentage1 = static_cast<float>(this->hrac1->getHealth()) / this->hrac1->getMaxHealth();
-    float percentage2 = static_cast<float>(this->hrac2->getHealth()) / this->hrac2->getMaxHealth();
+    float percentage1 = static_cast<float>(this->player->getHealth()) / this->player->getMaxHealth();
+    float percentage2 = static_cast<float>(this->enemy->getHealth()) / this->enemy->getMaxHealth();
 
-    this->player1HealthBar.setSize(sf::Vector2f(300.f * percentage1, this->player1HealthBar.getSize().y));
-    this->player2HealthBar.setSize(sf::Vector2f(300.f * percentage2, this->player2HealthBar.getSize().y));
+    this->playerHealthBar.setSize(sf::Vector2f(300.f * percentage1, this->playerHealthBar.getSize().y));
+    this->enemyHealthBar.setSize(sf::Vector2f(300.f * percentage2, this->enemyHealthBar.getSize().y));
 
 
 }
@@ -236,26 +252,26 @@ void Game::updateInput() {
 
         //Move player
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            this->hrac1->move(-1.f, 0.f);
+            this->player->move(-1.f, 0.f);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            this->hrac1->move(1.f, 0.f);
+            this->player->move(1.f, 0.f);
 
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->hrac1->canAttack()) {
-            this->hrac1->setAttackCooldown();
-            if (abs(this->hrac1->getPos().x - this->hrac2->getPos().x) < 90) {
-                this->hrac2->loseHp(20);
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->player->canAttack()) {
+            this->player->setAttackCooldown();
+            if (abs(this->player->getPos().x - this->enemy->getPos().x) < 90) {
+                this->enemy->loseHp(20);
                 playSound("au.wav");
                 sound = 2;
             } else {
                 playSound("empty-hit.wav");
                 sound = 1;
             }
-            this->player1Attacked = true;
+            this->playerAttacked = true;
         }
     }
     mutex.lock();
-    packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->player1Attacked << sound
-           << this->hrac2->getHealth();
+    packet << this->player->getPos().x << this->player->getPos().y << this->playerAttacked << sound
+           << this->enemy->getHealth();
     //TCP
     socket.send(packet);
     packet.clear();
@@ -264,44 +280,46 @@ void Game::updateInput() {
 
 void Game::render() {
 
-    this->window->clear();
+    this->window.clear();
 
     this->renderWorld();
     this->renderPlayers();
     this->renderGui();
 
-    if (this->endGame == true) {
+
+
+    if (this->endGame) {
         this->renderEnd();
     }
 
-    this->window->display();
+    this->window.display();
 }
 
 void Game::updatePlayers() {
-    this->hrac1->update();
-    this->hrac2->update();
+    this->player->update();
+    this->enemy->update();
 }
 
 void Game::renderGui() {
 
-    this->window->draw(this->player1Name);
-    this->window->draw(this->player2Name);
-    this->window->draw(this->player1HealthBar);
-    this->window->draw(this->player1HealthBarBack);
-    this->window->draw(this->player2HealthBar);
-    this->window->draw(this->player2HealthBarBack);
+    this->window.draw(this->playerName);
+    this->window.draw(this->enemyName);
+    this->window.draw(this->playerHealthBar);
+    this->window.draw(this->playerHealthBarBack);
+    this->window.draw(this->enemyHealthBar);
+    this->window.draw(this->enemyHealthBarBack);
 
 }
 
 void Game::renderEnd() {
     sf::Text winnerName;
-    winnerName.setPosition(sf::Vector2f((window->getSize().x / 2) - 100, window->getSize().y / 2));
+    winnerName.setPosition(sf::Vector2f((window.getSize().x / 2) - 100, window.getSize().y / 2));
     winnerName.setFont(this->gameFont);
     winnerName.setCharacterSize(35);
     winnerName.setFillColor(sf::Color::Green);
-    winnerName.setString("Vyhral hrac " + this->winner->getName());
+    winnerName.setString("Vyhral : " + this->winner->getName());
 
-    this->window->draw(winnerName);
+    this->window.draw(winnerName);
 
 }
 
@@ -312,8 +330,18 @@ void Game::playSound(sf::String string) {
     sound->play();
 }
 
+void Game::playMusic(sf::String string) {
+    bufferM->loadFromFile("../sounds/" + string);
+    battleMusic->setBuffer(*bufferM);
+    battleMusic->setVolume(5.0f);
+    battleMusic->setLoop(true);
+    battleMusic->play();
+
+}
+
 void Game::setPlayerType(char type, sf::String ip) {
 
+    sf::String eName;
     this->playerType = type;
     this->port = 2000;
 
@@ -324,16 +352,28 @@ void Game::setPlayerType(char type, sf::String ip) {
         clientSide(ip);
     }
 
+    mutex.lock();
+    packet << this->playerName.getString();
+    socket.send(packet);
+    packet.clear();
+    socket.receive(packet);
+    if (packet >> eName) {
+        this->enemyName.setString(eName);
+    }
+    packet.clear();
+    mutex.unlock();
+
+
     socket.setBlocking(false);
+
 }
 
 void Game::init() {
 
     this->initVariables();
-    this->initWindow();
     this->initPlayers();
     this->initGUI();
-
+    this->playMusic("battleMusic.ogg");
 
     sf::Thread *packetThread;
     packetThread = new sf::Thread(&Game::thUpdateOnlineGame, this);
@@ -377,6 +417,7 @@ void Game::clientSide(sf::String serverIP) {
         if (pocetPokusov >= 10) {
             std::cout << "Unable to connect to server" << std::endl;
             std::exit(0);
+
         }
 
     } while (status != sf::Socket::Done);
@@ -396,21 +437,21 @@ void Game::thUpdateOnlineGame() {
 
         socket.receive(packet);
         if (packet >> hrac2Pos.x >> hrac2Pos.y >> attacked >> sound >> healthHrac) {
-            this->hrac1->setHealth(healthHrac);
-            this->hrac2->setPosition(hrac2Pos);
-            this->player2Attacked = attacked;
+            this->player->setHealth(healthHrac);
+            this->enemy->setPosition(hrac2Pos);
+
             if (attacked) {
                 if (this->playerType == 's') {
-                    this->hrac2->updateTexture("hrac2utok.png");
+                    this->enemy->updateTexture("hrac2utok.png");
                 } else {
-                    this->hrac2->updateTexture("hrac1utok.png");
+                    this->enemy->updateTexture("hrac1utok.png");
 
                 }
             } else if (!attacked) {
                 if (this->playerType == 's') {
-                    this->hrac2->updateTexture("hrac2.png");
+                    this->enemy->updateTexture("hrac2.png");
                 } else {
-                    this->hrac2->updateTexture("hrac1.png");
+                    this->enemy->updateTexture("hrac1.png");
 
                 }
             }
@@ -448,22 +489,22 @@ void Game::thUpdateOnlineGame() {
 void Game::thAnimate() {
 
     while (!this->endGame) {
-        if (this->player1Attacked) {
+        if (this->playerAttacked) {
 
             if (this->playerType == 's') {
-                this->hrac1->updateTexture("hrac1utok.png");
+                this->player->updateTexture("hrac1utok.png");
             } else {
-                this->hrac1->updateTexture("hrac2utok.png");
+                this->player->updateTexture("hrac2utok.png");
 
             }
             sf::sleep(sf::milliseconds(150));
 
             if (this->playerType == 's') {
-                this->hrac1->updateTexture("hrac1.png");
+                this->player->updateTexture("hrac1.png");
             } else {
-                this->hrac1->updateTexture("hrac2.png");
+                this->player->updateTexture("hrac2.png");
             }
-            this->player1Attacked = false;
+            this->playerAttacked = false;
 
         }
 
@@ -472,7 +513,7 @@ void Game::thAnimate() {
 
 }
 
-sf::RenderWindow *Game::getWindow() {
+sf::RenderWindow& Game::getWindow() {
     return this->window;
 }
 
@@ -481,8 +522,7 @@ void Game::setPlayerName(sf::String string) {
     if (string.isEmpty()) {
         string = (this->playerType == 'c' ? "Player Client" : "Player Server");
     }
-
-    this->playerName = string;
+    this->playerName.setString(string);
 
 }
 

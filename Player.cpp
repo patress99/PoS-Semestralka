@@ -76,10 +76,6 @@ void Player::update() {
     this->updateAttack();
 }
 
-void Player::render(sf::RenderTarget &target) {
-    target.draw(this->sprite);
-}
-
 const int Player::getHealth() const {
     return this->health;
 }
@@ -124,3 +120,8 @@ bool Player::isConnected() const {
 void Player::setConnected(bool connected) {
     this->connected = connected;
 }
+
+sf::Sprite Player::getSprite() {
+    return this->sprite;
+}
+

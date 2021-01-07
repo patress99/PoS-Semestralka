@@ -46,6 +46,7 @@ public:
     void setAttackCooldown();
     void updateAttack();
     void update();
-    void render(sf::RenderTarget& target);
+
+    sf::Sprite getSprite();
 
 };
