@@ -100,11 +100,9 @@ Game::Game() {
     this->buffer = new sf::SoundBuffer();
     this->sound = new sf::Sound();
     this->ip = sf::IpAddress::getLocalAddress();
-
     this->playable = true;
-
-
 }
+
 
 Game::~Game() {
     delete this->window;
@@ -112,7 +110,6 @@ Game::~Game() {
     delete this->hrac2;
     delete this->buffer;
     delete this->sound;
-
 }
 
 
@@ -120,8 +117,7 @@ const bool Game::running() const {
     return this->window->isOpen();
 }
 
-const bool Game::getEndGame() const {
-
+const bool Game::isEndGame() const {
     return this->endGame;
 }
 
@@ -320,41 +316,10 @@ void Game::setPlayerType(char type) {
     this->port = 2000;
 
     if (type == 's') {
-
-        //this->port = 2000;
-
-
-        //UDP
-/*
-        if (socket.bind(this->port) != sf::Socket::Done) {
-            std::cout << "Socket Server Error: Unable to bind to port " << this->port << std::endl;
-        }
-
-*/
-
-
         serverSide();
-
-        std::cout << "Server Created!" << std::endl;
-
     } else {
-
-        //this->port = 2001;
-
-        //UDP
-/*
-        if (socket.bind(this->port) != sf::Socket::Done) {
-            std::cout << "Socket Client Error: Unable to bind to port " << this->port << std::endl;
-        }
-*/
-
-
         clientSide();
-
-        std::cout << "Client Created!" << std::endl;
-
     }
-
 
     socket.setBlocking(false);
 }

@@ -32,7 +32,7 @@ Menu::~Menu()
 void Menu::draw(sf::RenderWindow &window)
 {
     window.draw(this->background);
-    for (int i = 0; i < MAX_NUMBER_OF_ITEMS; i++)
+    for (int i = 0; i < currentAmountOfItems; i++)
     {
         window.draw(menu[i]);
     }
@@ -52,7 +52,7 @@ void Menu::MoveUp()
 void Menu::MoveDown()
 {
 
-    if (selectedItemIndex + 1 < MAX_NUMBER_OF_ITEMS)
+    if (selectedItemIndex + 1 < currentAmountOfItems)
     {
         menu[selectedItemIndex].setFillColor(sf::Color::White);
         selectedItemIndex++;
@@ -66,20 +66,21 @@ void Menu::mainMenu() {
         // handle error
     }
 
+    this->currentAmountOfItems = 2;
+
     this->currentMenu = 0;
 
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::Red);
     menu[0].setString("Play");
-    //menu[0].setPosition(sf::Vector2f(10.f, height / (MAX_NUMBER_OF_ITEMS + 1) * 1));
     menu[0].setPosition(sf::Vector2f(10.f, 100 * 1));
 
 
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
     menu[1].setString("Exit");
-    //menu[1].setPosition(sf::Vector2f(10.f, height / (MAX_NUMBER_OF_ITEMS + 1) * 2));
     menu[1].setPosition(sf::Vector2f(10.f, 100 * 2));
+
     selectedItemIndex = 0;
 }
 
@@ -92,19 +93,19 @@ void Menu::secondMenu(sf::Event event) {
     }
 
     this->currentMenu = 1;
+    this->currentAmountOfItems = 3;
 
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::Red);
     menu[0].setString("Start game");
-    //menu[0].setPosition(sf::Vector2f(10.f, height / (MAX_NUMBER_OF_ITEMS + 1) * 1));
     menu[0].setPosition(sf::Vector2f(10.f, 100 * 1));
+
     playerInput += event.text.unicode;
     playerText.setString(playerInput);
 
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
     menu[1].setString("Back");
-    //menu[1].setPosition(sf::Vector2f(10.f, height / (MAX_NUMBER_OF_ITEMS + 1) * 2));
     menu[1].setPosition(sf::Vector2f(10.f, 100 * 2));
 
     menu[2].setFont(font);

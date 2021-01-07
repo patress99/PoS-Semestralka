@@ -77,7 +77,7 @@ public:
 
     const bool running() const;
 
-    const bool getEndGame() const;
+    const bool isEndGame() const;
 
     void setPlayerType(char type);
 

@@ -16,7 +16,7 @@ void startGame(char type) {
     while ((odveta == 'Y' || odveta == 'y') ) {
         game.init();
         game.playSound("start.ogg");
-        while (!game.getEndGame() )
+        while (!game.isEndGame())
         {
             game.update();
             game.pollEvents();

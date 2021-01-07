@@ -3,15 +3,13 @@
 #include <SFML/Audio.hpp>
 #include <iostream>
 
-#define MAX_NUMBER_OF_ITEMS 3
-
-
 
 class Menu
 {
 private:
     int currentMenu;
     int selectedItemIndex;
+    int currentAmountOfItems;
 
     //Sound
     sf::SoundBuffer* buffer;
@@ -24,7 +22,7 @@ private:
     sf::Sprite background;
 
     sf::Font font;
-    sf::Text menu[MAX_NUMBER_OF_ITEMS];
+    sf::Text menu[10];
 
 public:
     Menu();
