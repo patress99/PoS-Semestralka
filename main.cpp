@@ -6,7 +6,7 @@
 void startGame(char type) {
 
     Game game;
-    game.playSound("start.ogg");
+
 
     char odveta = 'Y';
 
@@ -15,6 +15,7 @@ void startGame(char type) {
 
     while ((odveta == 'Y' || odveta == 'y') ) {
         game.init();
+        game.playSound("start.ogg");
         while (!game.getEndGame() )
         {
             game.update();

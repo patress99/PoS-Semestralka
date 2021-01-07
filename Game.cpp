@@ -432,7 +432,6 @@ void Game::thUpdateOnlineGame() {
     int sound;
 
     while (!this->endGame) {
-        std::cout << " " << std::endl;
         mutex.lock();
 
         socket.receive(packet);
@@ -465,7 +464,7 @@ void Game::thUpdateOnlineGame() {
         }
         packet.clear();
         mutex.unlock();
-
+        sf::sleep(sf::milliseconds(1));
 /*
         packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->hrac2->getHealth();
         //TCP
