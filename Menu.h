@@ -7,6 +7,12 @@
 class Menu
 {
 private:
+
+    sf::RenderWindow* window;
+
+    sf::String playerName;
+    sf::String hostIP;
+
     int currentMenu;
     int selectedItemIndex;
     int currentAmountOfItems;
@@ -29,15 +35,19 @@ public:
     ~Menu();
 
     void mainMenu();
-    void secondMenu(sf::Event event);
-    void draw(sf::RenderWindow &window);
+    void secondMenu();
+    void render();
 
     void MoveUp();
     void MoveDown();
     int GetPressedItem() { return selectedItemIndex; }
     int GetCurrentMenu();
 
+private:
+    void pollEvents();
+    void startGame(char type);
     void playSound(sf::String string);
-
     void playMusic(sf::String string);
+
+    void renderWindow();
 };

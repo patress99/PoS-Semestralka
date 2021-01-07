@@ -1,12 +1,25 @@
 #include "Menu.h"
+#include "Game.h"
 
 
-Menu::Menu()
-{
+Menu::Menu() {
+
+    this->window = new sf::RenderWindow(sf::VideoMode(600, 600), "Mlaticka");
+
+    sf::Image image;
+
+    if (!image.loadFromFile("../assets/mlaticka.png")) {
+        std::cout << "ERROR::GAME::COULD NOT LOAD ICON" << "\n";
+        exit(1);
+    }
+
+    this->window->setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
+
     this->buffer = new sf::SoundBuffer();
     this->bufferM = new sf::SoundBuffer();
     this->sound = new sf::Sound();
     this->mainTheme = new sf::Sound();
+
     playMusic("mlatC.ogg");
 
     if (!this->backgroundTex.loadFromFile("../assets/mlaticka.png")) {
@@ -14,46 +27,49 @@ Menu::Menu()
         exit(1);
     }
 
-
     this->background.setTexture(this->backgroundTex);
-    this->background.scale(0.95f,0.66f);
+    this->background.scale(0.95f, 0.66f);
+
+    this->mainMenu();
+
+    while (this->window->isOpen()) {
+        this->pollEvents();
+        this->renderWindow();
+    }
 }
 
 
-Menu::~Menu()
-{
+Menu::~Menu() {
+    delete this->window;
+    delete this->sound;
     delete this->buffer;
     delete this->bufferM;
-    delete this->sound;
     delete this->mainTheme;
 
 }
 
-void Menu::draw(sf::RenderWindow &window)
-{
-    window.draw(this->background);
-    for (int i = 0; i < currentAmountOfItems; i++)
-    {
-        window.draw(menu[i]);
+void Menu::render() {
+
+    this->window->draw(this->background);
+
+    for (int i = 0; i < currentAmountOfItems; i++) {
+        this->window->draw(menu[i]);
     }
+
 }
 
-void Menu::MoveUp()
-{
+void Menu::MoveUp() {
 
-    if (selectedItemIndex - 1 >= 0)
-    {
+    if (selectedItemIndex - 1 >= 0) {
         menu[selectedItemIndex].setFillColor(sf::Color::White);
         selectedItemIndex--;
         menu[selectedItemIndex].setFillColor(sf::Color::Red);
     }
 }
 
-void Menu::MoveDown()
-{
+void Menu::MoveDown() {
 
-    if (selectedItemIndex + 1 < currentAmountOfItems)
-    {
+    if (selectedItemIndex + 1 < currentAmountOfItems) {
         menu[selectedItemIndex].setFillColor(sf::Color::White);
         selectedItemIndex++;
         menu[selectedItemIndex].setFillColor(sf::Color::Red);
@@ -61,8 +77,8 @@ void Menu::MoveDown()
 }
 
 void Menu::mainMenu() {
-    if (!font.loadFromFile("../fonts/aAsianNinja.ttf"))
-    {
+
+    if (!font.loadFromFile("../fonts/aAsianNinja.ttf")) {
         // handle error
     }
 
@@ -84,11 +100,8 @@ void Menu::mainMenu() {
     selectedItemIndex = 0;
 }
 
-void Menu::secondMenu(sf::Event event) {
-    sf::String playerInput;
-    sf::Text playerText;
-    if (!font.loadFromFile("../fonts/aAsianNinja.ttf"))
-    {
+void Menu::secondMenu() {
+    if (!font.loadFromFile("../fonts/aAsianNinja.ttf")) {
         // handle error
     }
 
@@ -99,9 +112,6 @@ void Menu::secondMenu(sf::Event event) {
     menu[0].setFillColor(sf::Color::Red);
     menu[0].setString("Start game");
     menu[0].setPosition(sf::Vector2f(10.f, 100 * 1));
-
-    playerInput += event.text.unicode;
-    playerText.setString(playerInput);
 
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
@@ -134,4 +144,94 @@ void Menu::playMusic(sf::String string) {
     mainTheme->setBuffer(*bufferM);
     mainTheme->setVolume(1.0f);
     mainTheme->play();
+}
+
+void Menu::pollEvents() {
+
+    sf::Event event;
+    while (this->window->pollEvent(event)) {
+        switch (event.type) {
+            case sf::Event::KeyReleased:
+                switch (event.key.code) {
+                    case sf::Keyboard::Up:
+                        this->playSound("switch.ogg");
+                        this->MoveUp();
+                        break;
+
+                    case sf::Keyboard::Down:
+                        this->playSound("switch.ogg");
+                        this->MoveDown();
+                        break;
+
+                    case sf::Keyboard::Return:
+                        switch (this->GetPressedItem()) {
+                            case 0:
+                                this->playSound("select.ogg");
+                                if (this->GetCurrentMenu() == 0) {
+                                    this->secondMenu();
+                                } else {
+                                    this->window->close();
+                                    this->startGame('s');
+                                }
+                                break;
+                            case 1:
+                                this->playSound("select.ogg");
+                                if (this->GetCurrentMenu() == 0) {
+                                    this->window->close();
+                                } else {
+                                    this->mainMenu();
+                                }
+
+                                break;
+                            case 2:
+                                this->playSound("select.ogg");
+                                if (this->GetCurrentMenu() == 0) {
+                                    this->window->close();
+                                } else {
+                                    this->window->close();
+                                    startGame('c');
+                                }
+                                break;
+                        }
+                        break;
+                }
+                break;
+            case sf::Event::Closed:
+                this->window->close();
+                break;
+        }
+    }
+}
+
+void Menu::startGame(char type) {
+
+    Game game;
+
+    char odveta = 'Y';
+
+    game.setPlayerType(type);
+
+
+    while ((odveta == 'Y' || odveta == 'y')) {
+        game.init();
+        game.playSound("start.ogg");
+        while (!game.isEndGame()) {
+
+            game.update();
+            game.pollEvents();
+            game.render();
+
+        }
+        std::cout << "Chces odvetu? Y | N" << std::endl;
+        std::cin >> odveta;
+        std::cout << odveta << std::endl;
+
+        game.getWindow()->close();
+    }
+}
+
+void Menu::renderWindow() {
+    this->window->clear();
+    this->render();
+    this->window->display();
 }
