@@ -48,6 +48,7 @@ private:
     sf::RectangleShape player1HealthBar;
     sf::RectangleShape player1HealthBarBack;
     sf::Text player1Name;
+    sf::String playerName;
     bool player1Attacked;
 
     Player *hrac2;
@@ -79,7 +80,7 @@ public:
 
     const bool isEndGame() const;
 
-    void setPlayerType(char type);
+    void setPlayerType(char type, sf::String ip);
 
     void initPlayers();
 
@@ -115,10 +116,13 @@ public:
 
     void serverSide();
 
-    void clientSide();
+    void clientSide(sf::String ip);
 
     void thUpdateOnlineGame();
 
     void thAnimate();
 
+    void setPlayerName(sf::String string);
+
+    void acceptClient();
 };

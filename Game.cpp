@@ -87,11 +87,11 @@ void Game::initGUI() {
 void Game::initPlayers() {
 
     if (this->playerType == 's') {
-        this->hrac1 = new Player(1, "Player 1", 50, this->videoMode.height - 100);
+        this->hrac1 = new Player(1, this->playerName, 50, this->videoMode.height - 100);
         this->hrac2 = new Player(2, "Player 2 ", this->videoMode.width - 100, this->videoMode.height - 100);
     } else {
-        this->hrac1 = new Player(2, "Player 2", this->videoMode.width - 100, this->videoMode.height - 100);
-        this->hrac2 = new Player(1, "Player 1", 50, this->videoMode.height - 100);
+        this->hrac1 = new Player(2, this->playerName, this->videoMode.width - 100, this->videoMode.height - 100);
+        this->hrac2 = new Player(1, "Server", 50, this->videoMode.height - 100);
     }
 }
 
@@ -254,7 +254,8 @@ void Game::updateInput() {
         }
     }
     mutex.lock();
-    packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->player1Attacked << sound << this->hrac2->getHealth();
+    packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->player1Attacked << sound
+           << this->hrac2->getHealth();
     //TCP
     socket.send(packet);
     packet.clear();
@@ -311,35 +312,36 @@ void Game::playSound(sf::String string) {
     sound->play();
 }
 
-void Game::setPlayerType(char type) {
+void Game::setPlayerType(char type, sf::String ip) {
+
     this->playerType = type;
     this->port = 2000;
+
 
     if (type == 's') {
         serverSide();
     } else {
-        clientSide();
+        clientSide(ip);
     }
 
     socket.setBlocking(false);
 }
 
 void Game::init() {
+
     this->initVariables();
     this->initWindow();
     this->initPlayers();
     this->initGUI();
 
 
-    sf::Thread* packetThread;
-    packetThread = new sf::Thread(&Game::thUpdateOnlineGame,this);
+    sf::Thread *packetThread;
+    packetThread = new sf::Thread(&Game::thUpdateOnlineGame, this);
     packetThread->launch();
 
-    sf::Thread* animThread;
-    animThread = new sf::Thread(&Game::thAnimate,this);
+    sf::Thread *animThread;
+    animThread = new sf::Thread(&Game::thAnimate, this);
     animThread->launch();
-
-
 }
 
 
@@ -347,22 +349,27 @@ void Game::serverSide() {
 
     listener.listen(this->port);
     std::cout << "Listening on port " << this->port << ". Waiting for client to connect..." << std::endl;
-    listener.accept(this->socket);
-    std::cout << "Connection with client established " << std::endl;
+    this->acceptClient();
 
+    //sf::Thread * thread = new sf::Thread(&Game::acceptClient, this);
+    //thread->launch();
 }
 
-void Game::clientSide() {
-    std::cout << "Enter Server IP: ";
-    std::cin >> ip;
+void Game::acceptClient() {
+    listener.accept(this->socket);
+    std::cout << "Connection with client established " << std::endl;
+}
+
+void Game::clientSide(sf::String serverIP) {
+
+    sf::IpAddress ip(serverIP);
 
     sf::Socket::Status status;
 
     int pocetPokusov = 0;
-
     do {
 
-        status = this->socket.connect(ip,2000,sf::seconds(3));
+        status = this->socket.connect(ip, 2000, sf::seconds(3));
         std::cout << "Waiting for server to host game..." << std::endl;
 
         pocetPokusov++;
@@ -372,13 +379,12 @@ void Game::clientSide() {
             std::exit(0);
         }
 
-    } while(status != sf::Socket::Done);
+    } while (status != sf::Socket::Done);
 
     std::cout << "Connected to server! Starting Game..." << std::endl;
 }
 
 void Game::thUpdateOnlineGame() {
-
 
     sf::Vector2f prevPos, hrac2Pos;
     bool attacked;
@@ -411,7 +417,7 @@ void Game::thUpdateOnlineGame() {
             if (sound == 1) {
                 playSound("empty-hit.wav");
 
-            } else if (sound == 2){
+            } else if (sound == 2) {
                 playSound("au.wav");
             }
 
@@ -466,8 +472,18 @@ void Game::thAnimate() {
 
 }
 
-sf::RenderWindow* Game::getWindow() {
+sf::RenderWindow *Game::getWindow() {
     return this->window;
+}
+
+void Game::setPlayerName(sf::String string) {
+
+    if (string.isEmpty()) {
+        string = (this->playerType == 'c' ? "Player Client" : "Player Server");
+    }
+
+    this->playerName = string;
+
 }
 
 

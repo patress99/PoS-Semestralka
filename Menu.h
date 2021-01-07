@@ -11,7 +11,7 @@ private:
     sf::RenderWindow* window;
 
     sf::String playerName;
-    sf::String hostIP;
+    sf::String serverIP;
 
     int currentMenu;
     int selectedItemIndex;
@@ -34,8 +34,6 @@ public:
     Menu();
     ~Menu();
 
-    void mainMenu();
-    void secondMenu();
     void render();
 
     void MoveUp();
@@ -45,9 +43,18 @@ public:
 
 private:
     void pollEvents();
-    void startGame(char type);
+    void startGame(char type, sf::String playerName, sf::String serverIP);
     void playSound(sf::String string);
     void playMusic(sf::String string);
 
     void renderWindow();
+
+    void mainMenu();
+    void secondMenu();
+    void nicknameMenu();
+    void ipMenu();
+
+    void clientStartMenu();
+
+    void serverStartMenu();
 };

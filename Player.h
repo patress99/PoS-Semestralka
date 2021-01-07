@@ -14,6 +14,8 @@ private:
     int health;
     int maxHealth;
 
+    bool connected;
+
     sf::Sprite sprite;
     sf::Texture texture;
 
@@ -27,8 +29,10 @@ public:
 
     const int getHealth() const;
     const int getMaxHealth() const;
-    const std::string getName() const;
+    bool isConnected() const;
 
+    const std::string getName() const;
+    void setConnected(bool connected);
     void setPosition(const sf::Vector2f pos);
     void setPosition(const float x, const float y);
     void setHealth(const int hp);

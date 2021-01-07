@@ -116,3 +116,11 @@ void Player::updateTexture(sf::String string) {
 void Player::setAttackCooldown() {
     this->attackCooldown = 0.f;
 }
+
+bool Player::isConnected() const {
+    return this->connected;
+}
+
+void Player::setConnected(bool connected) {
+    this->connected = connected;
+}
