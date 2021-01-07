@@ -8,22 +8,29 @@ void startGame(char type) {
     Game game;
     game.playSound("start.ogg");
 
+    char odveta = 'Y';
+
     game.setPlayerType(type);
 
-    game.init();
 
-    while (game.running() )
-    {
-
-        if (!game.getEndGame()) {
-
+    while (odveta == 'Y' || odveta == 'y') {
+        game.init();
+        while (!game.getEndGame() )
+        {
             game.update();
-
+            game.pollEvents();
+            game.render();
         }
+        std::cout << "Chces odvetu? Y | N" << std::endl;
+        std::cin >> odveta;
+        std::cout << odveta << std::endl;
 
-        game.pollEvents();
-        game.render();
+        game.getWindow()->close();
     }
+
+
+
+
 
 }
 

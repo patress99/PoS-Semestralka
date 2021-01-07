@@ -102,7 +102,6 @@ Game::Game() {
     this->ip = sf::IpAddress::getLocalAddress();
 
     this->playable = true;
-    this->initVariables();
 
 
 }
@@ -234,6 +233,8 @@ void Game::updateGUI() {
 }
 
 void Game::updateInput() {
+    int sound = 0;
+
 
     if (this->playable) {
 
@@ -247,18 +248,25 @@ void Game::updateInput() {
             std::cout << this->hrac1->canAttack() << std::endl;
             this->hrac1->setAttackCooldown();
 
+
             std::cout << this->hrac1->canAttack() << std::endl;
             if (abs(this->hrac1->getPos().x - this->hrac2->getPos().x) < 90) {
                 this->hrac2->loseHp(20);
                 playSound("au.wav");
+                sound = 2;
             } else {
                 playSound("empty-hit.wav");
+                sound = 1;
             }
             this->player1Attacked = true;
         }
     }
-
-
+    mutex.lock();
+    packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->player1Attacked << sound << this->hrac2->getHealth();
+    //TCP
+    socket.send(packet);
+    packet.clear();
+    mutex.unlock();
 }
 
 void Game::render() {
@@ -357,6 +365,7 @@ void Game::setPlayerType(char type) {
 }
 
 void Game::init() {
+    this->initVariables();
     this->initWindow();
     this->initPlayers();
     this->initGUI();
@@ -398,8 +407,8 @@ void Game::serverSide() {
 
 void Game::clientSide() {
     //TCP
-    this->socket.connect(this->ip,2000);
-
+    std::cin >> ip;
+    this->socket.connect(ip,2000);
 
     //UDP
 /*    sf::IpAddress sendIP("25.85.55.6");
@@ -419,18 +428,18 @@ void Game::clientSide() {
 
 void Game::thUpdateOnlineGame() {
 
-    sf::Packet packet;
 
     sf::Vector2f prevPos, hrac2Pos;
     bool attacked;
     int healthH2, healthHrac;
+    int sound;
 
     while (!this->endGame) {
-        //std::cout << "Packet thread " << std::endl;
+        std::cout << "Packet thread " << std::endl;
+        mutex.lock();
 
         socket.receive(packet);
-
-        if (packet >> hrac2Pos.x >> hrac2Pos.y >> attacked >> healthHrac) {
+        if (packet >> hrac2Pos.x >> hrac2Pos.y >> attacked >> sound >> healthHrac) {
             this->hrac1->setHealth(healthHrac);
             this->hrac2->setPosition(hrac2Pos);
             this->player2Attacked = attacked;
@@ -441,7 +450,7 @@ void Game::thUpdateOnlineGame() {
                     this->hrac2->updateTexture("hrac1utok.png");
 
                 }
-            } else if (!attacked){
+            } else if (!attacked) {
                 if (this->playerType == 's') {
                     this->hrac2->updateTexture("hrac2.png");
                 } else {
@@ -449,17 +458,22 @@ void Game::thUpdateOnlineGame() {
 
                 }
             }
+            if (sound == 1) {
+                playSound("empty-hit.wav");
+
+            } else if (sound == 2){
+                playSound("au.wav");
+            }
 
         }
-
         packet.clear();
 
 
-
-        packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->player1Attacked << this->hrac2->getHealth();
-
+/*
+        packet << this->hrac1->getPos().x << this->hrac1->getPos().y << this->hrac2->getHealth();
         //TCP
         socket.send(packet);
+*/
 
         //UDP
 /*
@@ -469,8 +483,7 @@ void Game::thUpdateOnlineGame() {
 */
 
         socket.receive(packet);
-
-        if (packet >> hrac2Pos.x >> hrac2Pos.y >> attacked >> healthHrac) {
+        if (packet >> hrac2Pos.x >> hrac2Pos.y >> attacked >> sound >> healthHrac) {
             this->hrac1->setHealth(healthHrac);
             this->hrac2->setPosition(hrac2Pos);
             this->player2Attacked = attacked;
@@ -481,7 +494,7 @@ void Game::thUpdateOnlineGame() {
                     this->hrac2->updateTexture("hrac1utok.png");
 
                 }
-            } else if (!attacked){
+            } else if (!attacked) {
                 if (this->playerType == 's') {
                     this->hrac2->updateTexture("hrac2.png");
                 } else {
@@ -489,11 +502,16 @@ void Game::thUpdateOnlineGame() {
 
                 }
             }
+            if (sound == 1) {
+                playSound("empty-hit.wav");
+
+            } else if (sound == 2){
+                playSound("au.wav");
+            }
 
         }
-
         packet.clear();
-
+        mutex.unlock();
 
 
 
@@ -527,6 +545,10 @@ void Game::thAnimate() {
 
     }
 
+}
+
+sf::RenderWindow* Game::getWindow() {
+    return this->window;
 }
 
 

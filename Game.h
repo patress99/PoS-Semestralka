@@ -28,6 +28,8 @@ private:
     sf::Texture grassTex;
     sf::Sprite grass;
 
+
+    sf::Packet packet;
     sf::TcpSocket socket;
     sf::TcpListener listener;
 
@@ -101,7 +103,7 @@ public:
 
     void updateGUI();
 
-
+    sf::RenderWindow* getWindow();
 
     void renderGui();
 
