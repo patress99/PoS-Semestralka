@@ -3,3 +3,4 @@ CMakeLists.txt
 cmake-build-debug
 cmake-build-debug-mingw
 cmake-build-release
+.idea
