@@ -47,7 +47,9 @@ private:
     sf::RectangleShape playerHealthBar;
     sf::RectangleShape playerHealthBarBack;
     sf::Text playerName;
+
     bool playerAttacked;
+    bool playerBlocked;
 
     Player *enemy;
     sf::RectangleShape enemyHealthBar;
@@ -123,4 +125,5 @@ public:
     void acceptClient();
 
     void playMusic(sf::String string);
+
 };

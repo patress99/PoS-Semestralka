@@ -14,6 +14,8 @@ private:
     sf::String playerName;
     sf::String serverIP;
 
+    char playerType;
+
     int currentMenu;
     int selectedItemIndex;
     int currentAmountOfItems;

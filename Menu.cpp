@@ -9,6 +9,7 @@ Menu::Menu() {
 
     this->offsetX = 40.f;
     this->offsetY = 100.f;
+    this->playerType = 'x';
 
     this->videoMode.height = 900;
     this->videoMode.width = 1600;
@@ -16,7 +17,6 @@ Menu::Menu() {
     if (!font.loadFromFile("../fonts/aAsianNinja.ttf")) {
         // handle error
     }
-
 
 
     if (!this->backgroundTex.loadFromFile("../assets/mlaticka.png")) {
@@ -31,8 +31,7 @@ Menu::Menu() {
     }
 
 
-
-    this->window.create(this->videoMode,"Mlaticka",sf::Style::Titlebar | sf::Style::Close);
+    this->window.create(this->videoMode, "Mlaticka", sf::Style::Titlebar | sf::Style::Close);
 
 
     this->window.setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
@@ -46,7 +45,6 @@ Menu::Menu() {
     this->mainTheme = new sf::Sound();
 
     playMusic("mlatC.ogg");
-
 
 
     this->background.setTexture(this->backgroundTex);
@@ -81,7 +79,7 @@ void Menu::render() {
 void Menu::MoveUp() {
 
     if (selectedItemIndex - 1 >= 0) {
-        menu[selectedItemIndex].setScale(1,1);
+        menu[selectedItemIndex].setScale(1, 1);
         menu[selectedItemIndex].setFillColor(sf::Color::White);
 
         selectedItemIndex--;
@@ -93,7 +91,7 @@ void Menu::MoveUp() {
 void Menu::MoveDown() {
 
     if (selectedItemIndex + 1 < currentAmountOfItems) {
-        menu[selectedItemIndex].setScale(1,1);
+        menu[selectedItemIndex].setScale(1, 1);
         menu[selectedItemIndex].setFillColor(sf::Color::White);
         selectedItemIndex++;
         menu[selectedItemIndex].setFillColor(sf::Color::Red);
@@ -188,6 +186,7 @@ void Menu::ipMenu() {
 
 
 void Menu::serverStartMenu() {
+    this->playerType = 's';
     window.clear();
 
     this->currentMenu = 4;
@@ -197,8 +196,9 @@ void Menu::serverStartMenu() {
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::White);
     menu[0].setString("Waiting for Client to connect...");
-    menu[0].setPosition(sf::Vector2f(((float)this->window.getSize().x /2) - (menu[0].getLocalBounds().width /2 ), this->window.getSize().y /2));
-    menu[0].setScale(1,1);
+    menu[0].setPosition(sf::Vector2f(((float) this->window.getSize().x / 2) - (menu[0].getLocalBounds().width / 2),
+                                     this->window.getSize().y / 2));
+    menu[0].setScale(1, 1);
 
     window.draw(menu[0]);
     window.display();
@@ -207,6 +207,8 @@ void Menu::serverStartMenu() {
 }
 
 void Menu::clientStartMenu() {
+    this->playerType = 'c';
+
     window.clear();
 
     this->currentMenu = 5;
@@ -216,8 +218,9 @@ void Menu::clientStartMenu() {
     menu[0].setFont(font);
     menu[0].setFillColor(sf::Color::White);
     menu[0].setString("Waiting for Server to host game...");
-    menu[0].setPosition(sf::Vector2f(((float)this->window.getSize().x /2) - (menu[0].getLocalBounds().width /2 ), this->window.getSize().y /2));
-    menu[0].setScale(1,1);
+    menu[0].setPosition(sf::Vector2f(((float) this->window.getSize().x / 2) - (menu[0].getLocalBounds().width / 2),
+                                     this->window.getSize().y / 2));
+    menu[0].setScale(1, 1);
 
     window.draw(menu[0]);
     window.display();
@@ -226,36 +229,34 @@ void Menu::clientStartMenu() {
 }
 
 void Menu::revengeMenu() {
-    window.clear();
 
     this->currentMenu = 6;
-    this->currentAmountOfItems = 2;
-    this->selectedItemIndex = 0;
+    this->currentAmountOfItems = 3;
+    this->selectedItemIndex = 1;
 
-    sf::Text revText;
+    /*sf::Text revText;
 
     revText.setFont(font);
     revText.setFillColor(sf::Color::White);
     revText.setString("Odveta ? ");
     revText.setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
+     */
 
     menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::Red);
-    menu[0].setString("ANO");
-    menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
+    menu[0].setFillColor(sf::Color::White);
+    menu[0].setString("Odveta ? ");
+    menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
 
     menu[1].setFont(font);
-    menu[1].setFillColor(sf::Color::White);
-    menu[1].setString("NIE");
-    menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 3));
+    menu[1].setFillColor(sf::Color::Red);
+    menu[1].setString("ANO");
+    menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
 
-    window.draw(revText);
-    window.draw(menu[0]);
-    window.draw(menu[1]);
-
-    window.display();
+    menu[2].setFont(font);
+    menu[2].setFillColor(sf::Color::White);
+    menu[2].setString("NIE");
+    menu[2].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 3));
 }
-
 
 
 int Menu::GetCurrentMenu() {
@@ -353,6 +354,22 @@ void Menu::pollEvents() {
                                     this->secondMenu();
                                 }
                                 break;
+                            case 6:
+                                if (this->GetPressedItem() == 2) {
+                                    this->playSound("select.ogg");
+                                    this->window.close();
+                                } else if (this->GetPressedItem() == 1) {
+                                    this->playSound("select.ogg");
+                                    if (this->playerType == 'c') {
+                                        this->clientStartMenu();
+                                    } else if (this->playerType == 's') {
+                                        this->serverStartMenu();
+                                    } else {
+                                        std::cout << "Invalid player type" << std::endl;
+                                        this->window.close();
+                                    }
+                                }
+                                break;
                         }
                         break;
                 }
@@ -373,58 +390,15 @@ void Menu::startGame(char type, sf::String playerName, sf::String serverIP) {
 
     mainTheme->stop();
 
-
     game.init();
-    while (game.running()) {
-        if (!game.isEndGame()) {
-            game.update();
-            game.render();
-        }
 
+    while (game.running() && !game.isEndGame()) {
+        game.update();
+        game.render();
         game.pollEvents();
-
-
-        if (game.isEndGame()) {
-            sf::sleep(sf::seconds(3));
-            this->revengeMenu();
-
-            while (this->window.pollEvent(event)) {
-                if (event.type == sf::Event::KeyReleased) {
-
-                    switch (event.key.code) {
-                        case sf::Keyboard::Up:
-                            this->playSound("switch.ogg");
-                            this->MoveUp();
-                            break;
-                        case sf::Keyboard::Down:
-                            this->playSound("switch.ogg");
-                            this->MoveDown();
-                            break;
-                        case sf::Keyboard::Return:
-                            switch (this->GetCurrentMenu()) {
-                                case 6:
-                                    if (this->GetPressedItem() == 0) {
-                                        this->playSound("select.ogg");
-
-                                    } else {
-                                        this->window.close();
-                                        break;
-                                    }
-                                    break;
-                            }
-
-                            break;
-
-                    }
-
-                } else if (event.type ==sf::Event::Closed) {
-                    this->window.close();
-                }
-            }
-        }
     }
-
-
+    sf::sleep(sf::seconds(3));
+    this->revengeMenu();
 }
 
 void Menu::renderWindow() {
@@ -435,7 +409,7 @@ void Menu::renderWindow() {
 
 void Menu::clearScale() {
     for (int i = 0; i < 10; ++i) {
-        menu[i].setScale(1,1);
+        menu[i].setScale(1, 1);
     }
-    menu[selectedItemIndex].setScale(2,2);
+    menu[selectedItemIndex].setScale(2, 2);
 }

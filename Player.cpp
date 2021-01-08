@@ -13,6 +13,11 @@ Player::Player(int player, std::string name, float spawnX, float spawnY) {
     this->movementSpeed = 4.f;
     this->attackCooldownMax = 40.f;
     this->attackCooldown = this->attackCooldownMax;
+
+    this->blockCooldownMax = 100.f;
+    this->blockCooldown = this->blockCooldown;
+
+
     this->player = player;
     if (this->player == 1) {
         if (!texture.loadFromFile("../assets/hrac1.png")) {
@@ -34,6 +39,14 @@ Player::Player(int player, std::string name, float spawnX, float spawnY) {
 
 const bool Player::canAttack() {
     if (this->attackCooldown >= this->attackCooldownMax) {
+        return true;
+    }
+
+    return false;
+}
+
+const bool Player::canBlock() {
+    if (this->blockCooldown >= this->blockCooldownMax) {
         return true;
     }
 
@@ -72,8 +85,14 @@ void Player::updateAttack() {
         this->attackCooldown += 0.5f;
 }
 
+void Player::updateBlock()  {
+    if (this->blockCooldown < this->blockCooldownMax)
+        this->blockCooldown += 0.5f;
+}
+
 void Player::update() {
     this->updateAttack();
+    this->updateBlock();
 }
 
 const int Player::getHealth() const {
@@ -111,6 +130,10 @@ void Player::updateTexture(sf::String string) {
 
 void Player::setAttackCooldown() {
     this->attackCooldown = 0.f;
+}
+
+void Player::setBlockCooldown() {
+    this->blockCooldown = 0.f;
 }
 
 bool Player::isConnected() const {

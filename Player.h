@@ -11,6 +11,9 @@ private:
     float attackCooldown;
     float attackCooldownMax;
 
+    float blockCooldown;
+    float blockCooldownMax;
+
     int health;
     int maxHealth;
 
@@ -40,11 +43,14 @@ public:
 
     void move(const float dirX, const float dirY);
     const bool canAttack();
+    const bool canBlock();
 
     void updateTexture(sf::String string);
 
     void setAttackCooldown();
+    void setBlockCooldown();
     void updateAttack();
+    void updateBlock();
     void update();
 
     sf::Sprite getSprite();

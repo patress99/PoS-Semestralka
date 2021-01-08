@@ -256,7 +256,7 @@ void Game::updateInput() {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             this->player->move(1.f, 0.f);
 
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->player->canAttack()) {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->player->canAttack() && !this->playerBlocked) {
             this->player->setAttackCooldown();
             if (abs(this->player->getPos().x - this->enemy->getPos().x) < 90) {
                 this->enemy->loseHp(20);
@@ -267,10 +267,15 @@ void Game::updateInput() {
                 sound = 1;
             }
             this->playerAttacked = true;
+        } else if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && this->player->canBlock() && !this->playerAttacked) {
+            this->player->setBlockCooldown();
+            this->playerBlocked = true;
+            //TODO: Block
         }
     }
+
     mutex.lock();
-    packet << this->player->getPos().x << this->player->getPos().y << this->playerAttacked << sound
+    packet << this->player->getPos().x << this->player->getPos().y << this->playerAttacked << this->playerBlocked << sound
            << this->enemy->getHealth();
     //TCP
     socket.send(packet);
@@ -428,7 +433,7 @@ void Game::clientSide(sf::String serverIP) {
 void Game::thUpdateOnlineGame() {
 
     sf::Vector2f prevPos, hrac2Pos;
-    bool attacked;
+    bool attacked, blocked;
     int healthH2, healthHrac;
     int sound;
 
@@ -436,7 +441,7 @@ void Game::thUpdateOnlineGame() {
         mutex.lock();
 
         socket.receive(packet);
-        if (packet >> hrac2Pos.x >> hrac2Pos.y >> attacked >> sound >> healthHrac) {
+        if (packet >> hrac2Pos.x >> hrac2Pos.y >> attacked >> blocked >> sound >> healthHrac) {
             this->player->setHealth(healthHrac);
             this->enemy->setPosition(hrac2Pos);
 
@@ -445,7 +450,6 @@ void Game::thUpdateOnlineGame() {
                     this->enemy->updateTexture("hrac2utok.png");
                 } else {
                     this->enemy->updateTexture("hrac1utok.png");
-
                 }
             } else if (!attacked) {
                 if (this->playerType == 's') {
@@ -455,6 +459,15 @@ void Game::thUpdateOnlineGame() {
 
                 }
             }
+
+            if (blocked) {
+                if (this->playerType == 's') {
+                    this->enemy->updateTexture("hrac2blok.png");
+                } else {
+                    this->enemy->updateTexture("hrac1blok.png");
+                }
+            }
+
             if (sound == 1) {
                 playSound("empty-hit.wav");
 
@@ -506,9 +519,24 @@ void Game::thAnimate() {
             }
             this->playerAttacked = false;
 
+        } else if (this->playerBlocked) {
+
+            if (this->playerType == 's') {
+                this->player->updateTexture("hrac1blok.png");
+            } else {
+                this->player->updateTexture("hrac2blok.png");
+
+            }
+            sf::sleep(sf::milliseconds(1000));
+
+            if (this->playerType == 's') {
+                this->player->updateTexture("hrac1.png");
+            } else {
+                this->player->updateTexture("hrac2.png");
+            }
+            this->playerBlocked = false;
+
         }
-
-
     }
 
 }
@@ -520,7 +548,7 @@ sf::RenderWindow& Game::getWindow() {
 void Game::setPlayerName(sf::String string) {
 
     if (string.isEmpty()) {
-        string = (this->playerType == 'c' ? "Player Client" : "Player Server");
+        string = (this->playerType == 'c' ? "Player1" : "Player2");
     }
     this->playerName.setString(string);
 
