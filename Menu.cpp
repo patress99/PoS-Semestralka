@@ -4,23 +4,23 @@
 
 Menu::Menu() {
 
-    playerName = "Player";
-    serverIP = "localhost";
-
-    this->offsetX = 40.f;
-    this->offsetY = 100.f;
+    this->playerName = "Player";
+    this->serverIP = "localhost";
     this->playerType = 'x';
+
+    this->offsetY = 100.f;
+    this->offsetX = 40.f;
 
     this->videoMode.height = 900;
     this->videoMode.width = 1600;
 
     if (!font.loadFromFile("../fonts/aAsianNinja.ttf")) {
-        // handle error
+        std::cout << "Cannot load Font aAsianNinja!" << std::endl;
     }
 
 
     if (!this->backgroundTex.loadFromFile("../assets/mlaticka.png")) {
-        std::cout << "ERROR::GAME::COULD NOT LOAD BACKGROUND TEXTURE" << "\n";
+        std::cout << "ERROR::GAME::COULD NOT LOAD BACKGROUND TEXTURE" << std::endl;
         exit(1);
     }
 
@@ -44,7 +44,7 @@ Menu::Menu() {
     this->sound = new sf::Sound();
     this->mainTheme = new sf::Sound();
 
-    playMusic("mlatC.ogg");
+    this->playMusic("mlatC.ogg");
 
 
     this->background.setTexture(this->backgroundTex);
@@ -70,31 +70,31 @@ void Menu::render() {
 
     this->window.draw(this->background);
 
-    for (int i = 0; i < currentAmountOfItems; i++) {
-        this->window.draw(menu[i]);
+    for (int i = 0; i < this->currentAmountOfItems; i++) {
+        this->window.draw(this->menu[i]);
     }
 
 }
 
 void Menu::MoveUp() {
 
-    if (selectedItemIndex - 1 >= 0) {
-        menu[selectedItemIndex].setScale(1, 1);
-        menu[selectedItemIndex].setFillColor(sf::Color::White);
+    if (this->selectedItemIndex - 1 >= 0) {
+        this->menu[this->selectedItemIndex].setScale(1, 1);
+        this->menu[this->selectedItemIndex].setFillColor(sf::Color::White);
 
-        selectedItemIndex--;
-        menu[selectedItemIndex].setFillColor(sf::Color::Red);
+        this->selectedItemIndex--;
+        this->menu[this->selectedItemIndex].setFillColor(sf::Color::Red);
 
     }
 }
 
 void Menu::MoveDown() {
 
-    if (selectedItemIndex + 1 < currentAmountOfItems) {
-        menu[selectedItemIndex].setScale(1, 1);
-        menu[selectedItemIndex].setFillColor(sf::Color::White);
-        selectedItemIndex++;
-        menu[selectedItemIndex].setFillColor(sf::Color::Red);
+    if (this->selectedItemIndex + 1 < this->currentAmountOfItems) {
+        this->menu[this->selectedItemIndex].setScale(1, 1);
+        this->menu[this->selectedItemIndex].setFillColor(sf::Color::White);
+        this->selectedItemIndex++;
+        this->menu[this->selectedItemIndex].setFillColor(sf::Color::Red);
 
     }
 }
@@ -106,16 +106,15 @@ void Menu::mainMenu() {
     this->currentAmountOfItems = 2;
     this->selectedItemIndex = 0;
 
-    menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::Red);
-    menu[0].setString("Play");
-    menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
+    this->menu[0].setFont(this->font);
+    this->menu[0].setFillColor(sf::Color::Red);
+    this->menu[0].setString("Play");
+    this->menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
 
-
-    menu[1].setFont(font);
-    menu[1].setFillColor(sf::Color::White);
-    menu[1].setString("Exit");
-    menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
+    this->menu[1].setFont(this->font);
+    this->menu[1].setFillColor(sf::Color::White);
+    this->menu[1].setString("Exit");
+    this->menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
 
 }
 
@@ -124,25 +123,25 @@ void Menu::secondMenu() {
     this->currentAmountOfItems = 4;
     this->selectedItemIndex = 0;
 
-    menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::Red);
-    menu[0].setString("Start game");
-    menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
+    this->menu[0].setFont(this->font);
+    this->menu[0].setFillColor(sf::Color::Red);
+    this->menu[0].setString("Start game");
+    this->menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
 
-    menu[1].setFont(font);
-    menu[1].setFillColor(sf::Color::White);
-    menu[1].setString("Join game");
-    menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
+    this->menu[1].setFont(this->font);
+    this->menu[1].setFillColor(sf::Color::White);
+    this->menu[1].setString("Join game");
+    this->menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
 
-    menu[2].setFont(font);
-    menu[2].setFillColor(sf::Color::White);
-    menu[2].setString("Change Nickname");
-    menu[2].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 3));
+    this->menu[2].setFont(this->font);
+    this->menu[2].setFillColor(sf::Color::White);
+    this->menu[2].setString("Change Nickname");
+    this->menu[2].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 3));
 
-    menu[3].setFont(font);
-    menu[3].setFillColor(sf::Color::White);
-    menu[3].setString("Back");
-    menu[3].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 4));
+    this->menu[3].setFont(this->font);
+    this->menu[3].setFillColor(sf::Color::White);
+    this->menu[3].setString("Back");
+    this->menu[3].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 4));
 }
 
 void Menu::nicknameMenu() {
@@ -150,15 +149,15 @@ void Menu::nicknameMenu() {
     this->currentAmountOfItems = 2;
     this->selectedItemIndex = 0;
 
-    menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::Red);
-    menu[0].setString("Nickname: " + playerName);
-    menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
+    this->menu[0].setFont(this->font);
+    this->menu[0].setFillColor(sf::Color::Red);
+    this->menu[0].setString("Nickname: " + this->playerName);
+    this->menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
 
-    menu[1].setFont(font);
-    menu[1].setFillColor(sf::Color::White);
-    menu[1].setString("Back");
-    menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
+    this->menu[1].setFont(this->font);
+    this->menu[1].setFillColor(sf::Color::White);
+    this->menu[1].setString("Back");
+    this->menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
 
 }
 
@@ -168,64 +167,57 @@ void Menu::ipMenu() {
     this->currentAmountOfItems = 3;
     this->selectedItemIndex = 0;
 
-    menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::Red);
-    menu[0].setString("Server IP: " + serverIP);
-    menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
+    this->menu[0].setFont(this->font);
+    this->menu[0].setFillColor(sf::Color::Red);
+    this->menu[0].setString("Server IP: " + this->serverIP);
+    this->menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
 
-    menu[1].setFont(font);
-    menu[1].setFillColor(sf::Color::White);
-    menu[1].setString("Connect");
-    menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
+    this->menu[1].setFont(this->font);
+    this->menu[1].setFillColor(sf::Color::White);
+    this->menu[1].setString("Connect");
+    this->menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
 
-    menu[2].setFont(font);
-    menu[2].setFillColor(sf::Color::White);
-    menu[2].setString("Back");
-    menu[2].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 3));
+    this->menu[2].setFont(this->font);
+    this->menu[2].setFillColor(sf::Color::White);
+    this->menu[2].setString("Back");
+    this->menu[2].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 3));
 }
 
 
 void Menu::serverStartMenu() {
-    this->playerType = 's';
-    window.clear();
+    this->window.clear();
 
     this->currentMenu = 4;
     this->currentAmountOfItems = 1;
     this->selectedItemIndex = 0;
 
-    menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::White);
-    menu[0].setString("Waiting for Client to connect...");
-    menu[0].setPosition(sf::Vector2f(((float) this->window.getSize().x / 2) - (menu[0].getLocalBounds().width / 2),
+    this->menu[0].setFont(this->font);
+    this->menu[0].setFillColor(sf::Color::White);
+    this->menu[0].setString("Waiting for Client to connect...");
+    this->menu[0].setPosition(sf::Vector2f(((float) this->window.getSize().x / 2) - (this->menu[0].getLocalBounds().width / 2),
                                      this->window.getSize().y / 2));
-    menu[0].setScale(1, 1);
+    this->menu[0].setScale(1, 1);
 
-    window.draw(menu[0]);
-    window.display();
-
-    this->startGame('s', playerName, serverIP);
+    this->window.draw(this->menu[0]);
+    this->window.display();
 }
 
 void Menu::clientStartMenu() {
-    this->playerType = 'c';
-
-    window.clear();
+    this->window.clear();
 
     this->currentMenu = 5;
     this->currentAmountOfItems = 1;
     this->selectedItemIndex = 0;
 
-    menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::White);
-    menu[0].setString("Waiting for Server to host game...");
-    menu[0].setPosition(sf::Vector2f(((float) this->window.getSize().x / 2) - (menu[0].getLocalBounds().width / 2),
+    this->menu[0].setFont(this->font);
+    this->menu[0].setFillColor(sf::Color::White);
+    this->menu[0].setString("Waiting for Server to host game...");
+    this->menu[0].setPosition(sf::Vector2f(((float) this->window.getSize().x / 2) - (this->menu[0].getLocalBounds().width / 2),
                                      this->window.getSize().y / 2));
-    menu[0].setScale(1, 1);
+    this->menu[0].setScale(1, 1);
 
-    window.draw(menu[0]);
-    window.display();
-
-    this->startGame('c', playerName, serverIP);
+    this->window.draw(this->menu[0]);
+    this->window.display();
 }
 
 void Menu::revengeMenu() {
@@ -242,20 +234,20 @@ void Menu::revengeMenu() {
     revText.setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
      */
 
-    menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::White);
-    menu[0].setString("Odveta ? ");
-    menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
+    this->menu[0].setFont(this->font);
+    this->menu[0].setFillColor(sf::Color::White);
+    this->menu[0].setString("Odveta ? ");
+    this->menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
 
-    menu[1].setFont(font);
-    menu[1].setFillColor(sf::Color::Red);
-    menu[1].setString("ANO");
-    menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
+    this->menu[1].setFont(this->font);
+    this->menu[1].setFillColor(sf::Color::Red);
+    this->menu[1].setString("ANO");
+    this->menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
 
-    menu[2].setFont(font);
-    menu[2].setFillColor(sf::Color::White);
-    menu[2].setString("NIE");
-    menu[2].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 3));
+    this->menu[2].setFont(this->font);
+    this->menu[2].setFillColor(sf::Color::White);
+    this->menu[2].setString("NIE");
+    this->menu[2].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 3));
 }
 
 
@@ -264,17 +256,17 @@ int Menu::GetCurrentMenu() {
 }
 
 void Menu::playSound(sf::String string) {
-    buffer->loadFromFile("../sounds/" + string);
-    sound->setBuffer(*buffer);
-    sound->setVolume(20.0f);
-    sound->play();
+    this->buffer->loadFromFile("../sounds/" + string);
+    this->sound->setBuffer(*this->buffer);
+    this->sound->setVolume(20.0f);
+    this->sound->play();
 }
 
 void Menu::playMusic(sf::String string) {
-    bufferM->loadFromFile("../sounds/" + string);
-    mainTheme->setBuffer(*bufferM);
-    mainTheme->setVolume(1.0f);
-    mainTheme->play();
+    this->bufferM->loadFromFile("../sounds/" + string);
+    this->mainTheme->setBuffer(*this->bufferM);
+    this->mainTheme->setVolume(1.0f);
+    this->mainTheme->play();
 }
 
 void Menu::pollEvents() {
@@ -283,24 +275,24 @@ void Menu::pollEvents() {
 
         switch (event.type) {
             case sf::Event::TextEntered:
-                if (selectedItemIndex == 0 && GetCurrentMenu() == 2) {
+                if (this->selectedItemIndex == 0 && GetCurrentMenu() == 2) {
 
                     if (event.text.unicode != 8) {
-                        playerName += event.text.unicode;
+                        this->playerName += event.text.unicode;
                     } else {
-                        playerName = playerName.substring(0, playerName.getSize() - 1);
+                        this->playerName = this->playerName.substring(0, this->playerName.getSize() - 1);
                     }
 
-                    menu[0].setString("Nickname: " + playerName);
-                } else if (selectedItemIndex == 0 && GetCurrentMenu() == 3) {
+                    this->menu[0].setString("Nickname: " + this->playerName);
+                } else if (this->selectedItemIndex == 0 && GetCurrentMenu() == 3) {
 
                     if (event.text.unicode != 8) {
-                        serverIP += event.text.unicode;
+                        this->serverIP += event.text.unicode;
                     } else {
-                        serverIP = serverIP.substring(0, serverIP.getSize() - 1);
+                        this->serverIP = this->serverIP.substring(0, this->serverIP.getSize() - 1);
                     }
 
-                    menu[0].setString("Server IP: " + serverIP);
+                    this->menu[0].setString("Server IP: " + this->serverIP);
                 }
                 break;
             case sf::Event::KeyReleased:
@@ -327,7 +319,9 @@ void Menu::pollEvents() {
                             case 1:
                                 if (this->GetPressedItem() == 0) {
                                     this->playSound("select.ogg");
+                                    this->playerType = 's';
                                     this->serverStartMenu();
+                                    this->startGame(this->playerType, this->playerName, this->serverIP);
                                 } else if (this->GetPressedItem() == 1) {
                                     this->playSound("select.ogg");
                                     this->ipMenu();
@@ -348,7 +342,9 @@ void Menu::pollEvents() {
                             case 3:
                                 if (this->GetPressedItem() == 1) {
                                     this->playSound("select.ogg");
+                                    this->playerType = 'c';
                                     this->clientStartMenu();
+                                    this->startGame(this->playerType,this->playerName,this->serverIP);
                                 } else if (this->GetPressedItem() == 2) {
                                     this->playSound("select.ogg");
                                     this->secondMenu();
@@ -362,8 +358,10 @@ void Menu::pollEvents() {
                                     this->playSound("select.ogg");
                                     if (this->playerType == 'c') {
                                         this->clientStartMenu();
+                                        this->startGame(this->playerType, this->playerName, this->serverIP);
                                     } else if (this->playerType == 's') {
                                         this->serverStartMenu();
+                                        this->startGame(this->playerType, this->playerName, this->serverIP);
                                     } else {
                                         std::cout << "Invalid player type" << std::endl;
                                         this->window.close();
@@ -388,7 +386,7 @@ void Menu::startGame(char type, sf::String playerName, sf::String serverIP) {
     game.setPlayerName(playerName);
     game.setPlayerType(type, serverIP);
 
-    mainTheme->stop();
+    this->mainTheme->stop();
 
     game.init();
 
@@ -410,7 +408,7 @@ void Menu::renderWindow() {
 
 void Menu::clearScale() {
     for (int i = 0; i < 10; ++i) {
-        menu[i].setScale(1, 1);
+        this->menu[i].setScale(1, 1);
     }
-    menu[selectedItemIndex].setScale(2, 2);
+    this->menu[selectedItemIndex].setScale(2, 2);
 }
