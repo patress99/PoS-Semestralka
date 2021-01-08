@@ -27,6 +27,8 @@ private:
     sf::Texture grassTex;
     sf::Sprite grass;
 
+    sf::Texture muteTex;
+    sf::Sprite muteIcon;
 
     sf::Packet packet;
     sf::TcpSocket socket;
@@ -48,12 +50,14 @@ private:
     sf::RectangleShape playerHealthBarBack;
     sf::Text playerName;
 
-    bool playerAttacked;
-    bool playerBlocked;
+    bool playerAttacked = false;
+    bool playerBlocked = false;
+    bool playerCritical = false;
 
     Player *enemy;
     sf::RectangleShape enemyHealthBar;
     sf::RectangleShape enemyHealthBarBack;
+    bool enemyBlocked = false;
     sf::Text enemyName;
 
     char playerType;
@@ -63,6 +67,8 @@ private:
     sf::SoundBuffer* bufferM;
     sf::Sound* sound;
     sf::Sound* battleMusic;
+
+    int musicCooldown;
 
     bool endGame;
 
@@ -77,8 +83,6 @@ public:
     const bool running() const;
 
     const bool isEndGame() const;
-
-    void setPlayerType(char type, sf::String ip);
 
     void initPlayers();
 
@@ -114,7 +118,9 @@ public:
 
     void serverSide();
 
-    void clientSide(sf::String ip);
+    bool clientSide(sf::String ip);
+
+    bool setPlayerType(char type, sf::String ip);
 
     void thUpdateOnlineGame();
 
@@ -125,5 +131,9 @@ public:
     void acceptClient();
 
     void playMusic(sf::String string);
+
+    Player* getWinner();
+
+    bool musCooldown();
 
 };

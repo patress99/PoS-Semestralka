@@ -35,6 +35,7 @@ private:
     sf::Sprite background;
 
     sf::Font font;
+    sf::Text revText;
     sf::Text menu[10];
 
 public:
@@ -68,4 +69,6 @@ private:
     void revengeMenu();
 
     void clearScale();
+
+    void failedToConnectMenu();
 };

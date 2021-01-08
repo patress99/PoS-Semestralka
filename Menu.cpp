@@ -39,6 +39,14 @@ Menu::Menu() {
     this->window.setVerticalSyncEnabled(false);
 
 
+    this->revText.setFont(this->font);
+    this->revText.setFillColor(sf::Color::White);
+    this->revText.setString("Odveta ?");
+    this->revText.setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
+
+
+
+
     this->buffer = new sf::SoundBuffer();
     this->bufferM = new sf::SoundBuffer();
     this->sound = new sf::Sound();
@@ -69,6 +77,10 @@ Menu::~Menu() {
 void Menu::render() {
 
     this->window.draw(this->background);
+
+    if (this->GetCurrentMenu() == 6) {
+        this->window.draw(this->revText);
+    }
 
     for (int i = 0; i < this->currentAmountOfItems; i++) {
         this->window.draw(this->menu[i]);
@@ -191,6 +203,14 @@ void Menu::serverStartMenu() {
     this->currentAmountOfItems = 1;
     this->selectedItemIndex = 0;
 
+    sf::Text controls;
+    controls.setFont(this->font);
+    controls.setFillColor(sf::Color::White);
+    controls.setString("        Controls\n\n Movement : A | D \n Attack : LeftClick \n Block : RightClick");
+    controls.setPosition(sf::Vector2f(((float) this->window.getSize().x / 2) - (controls.getLocalBounds().width / 2),
+                                      (this->window.getSize().y / 2) + 100));
+
+
     this->menu[0].setFont(this->font);
     this->menu[0].setFillColor(sf::Color::White);
     this->menu[0].setString("Waiting for Client to connect...");
@@ -198,7 +218,9 @@ void Menu::serverStartMenu() {
                                      this->window.getSize().y / 2));
     this->menu[0].setScale(1, 1);
 
+
     this->window.draw(this->menu[0]);
+    this->window.draw(controls);
     this->window.display();
 }
 
@@ -209,6 +231,14 @@ void Menu::clientStartMenu() {
     this->currentAmountOfItems = 1;
     this->selectedItemIndex = 0;
 
+
+    sf::Text controls;
+    controls.setFont(this->font);
+    controls.setFillColor(sf::Color::White);
+    controls.setString("        Controls\n\n Movement : A | D \n Attack : LeftClick \n Block : RightClick");
+    controls.setPosition(sf::Vector2f(((float) this->window.getSize().x / 2) - (controls.getLocalBounds().width / 2),
+                                      (this->window.getSize().y / 2) + 100));
+
     this->menu[0].setFont(this->font);
     this->menu[0].setFillColor(sf::Color::White);
     this->menu[0].setString("Waiting for Server to host game...");
@@ -217,38 +247,46 @@ void Menu::clientStartMenu() {
     this->menu[0].setScale(1, 1);
 
     this->window.draw(this->menu[0]);
+    this->window.draw(controls);
     this->window.display();
 }
 
 void Menu::revengeMenu() {
 
     this->currentMenu = 6;
-    this->currentAmountOfItems = 3;
-    this->selectedItemIndex = 1;
+    this->currentAmountOfItems = 2;
+    this->selectedItemIndex = 0;
 
-    /*sf::Text revText;
+    this->menu[0].setFont(this->font);
+    this->menu[0].setFillColor(sf::Color::Red);
+    this->menu[0].setString("ANO");
+    this->menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
 
-    revText.setFont(font);
-    revText.setFillColor(sf::Color::White);
-    revText.setString("Odveta ? ");
-    revText.setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
-     */
+    this->menu[1].setFont(this->font);
+    this->menu[1].setFillColor(sf::Color::White);
+    this->menu[1].setString("NIE");
+    this->menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 3));
+}
+
+void Menu::failedToConnectMenu() {
+    this->window.clear();
+
+    this->currentMenu = 7;
+    this->currentAmountOfItems = 1;
+    this->selectedItemIndex = 0;
 
     this->menu[0].setFont(this->font);
     this->menu[0].setFillColor(sf::Color::White);
-    this->menu[0].setString("Odveta ? ");
-    this->menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
+    this->menu[0].setString("Failed to connect to the Server! Returning to menu");
+    this->menu[0].setPosition(sf::Vector2f(((float) this->window.getSize().x / 2) - (this->menu[0].getLocalBounds().width / 2),
+                                           this->window.getSize().y / 2));
+    this->menu[0].setScale(1, 1);
 
-    this->menu[1].setFont(this->font);
-    this->menu[1].setFillColor(sf::Color::Red);
-    this->menu[1].setString("ANO");
-    this->menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
+    this->window.draw(this->menu[0]);
+    this->window.display();
 
-    this->menu[2].setFont(this->font);
-    this->menu[2].setFillColor(sf::Color::White);
-    this->menu[2].setString("NIE");
-    this->menu[2].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 3));
 }
+
 
 
 int Menu::GetCurrentMenu() {
@@ -297,6 +335,23 @@ void Menu::pollEvents() {
                 break;
             case sf::Event::KeyReleased:
                 switch (event.key.code) {
+                    case sf::Keyboard::Escape:
+                        this->playSound("switch.ogg");
+
+                        switch (this->GetCurrentMenu()) {
+                            case 1:
+                                this->mainMenu();
+                                break;
+                            case 2:
+                                this->secondMenu();
+                                break;
+                            case 3:
+                                this->secondMenu();
+                                break;
+
+                        }
+
+                        break;
                     case sf::Keyboard::Up:
                         this->playSound("switch.ogg");
                         this->MoveUp();
@@ -351,21 +406,18 @@ void Menu::pollEvents() {
                                 }
                                 break;
                             case 6:
-                                if (this->GetPressedItem() == 2) {
+                                if (this->GetPressedItem() == 0) {
                                     this->playSound("select.ogg");
-                                    this->mainMenu();
-                                } else if (this->GetPressedItem() == 1) {
-                                    this->playSound("select.ogg");
-                                    if (this->playerType == 'c') {
-                                        this->clientStartMenu();
-                                        this->startGame(this->playerType, this->playerName, this->serverIP);
-                                    } else if (this->playerType == 's') {
+                                    if (this->playerType == 's') {
                                         this->serverStartMenu();
                                         this->startGame(this->playerType, this->playerName, this->serverIP);
                                     } else {
-                                        std::cout << "Invalid player type" << std::endl;
-                                        this->window.close();
+                                        this->clientStartMenu();
+                                        this->startGame(this->playerType, this->playerName, this->serverIP);
                                     }
+                                } else if (this->GetPressedItem() == 1) {
+                                    this->playSound("select.ogg");
+                                    this->mainMenu();
                                 }
                                 break;
                         }
@@ -384,20 +436,32 @@ void Menu::startGame(char type, sf::String playerName, sf::String serverIP) {
     Game game(this->window);
 
     game.setPlayerName(playerName);
-    game.setPlayerType(type, serverIP);
+    if (!game.setPlayerType(type, serverIP)) {
+        this->failedToConnectMenu();
+        sf::sleep(sf::seconds(3));
+        this->ipMenu();
+    } else {
 
-    this->mainTheme->stop();
+        this->mainTheme->stop();
 
-    game.init();
+        game.init();
 
-    while (game.running() && !game.isEndGame()) {
-        game.update();
-        game.render();
-        game.pollEvents();
+        while (game.running() && !game.isEndGame()) {
+            game.update();
+            game.render();
+            game.pollEvents();
+
+        }
+        sf::sleep(sf::seconds(3));
+        if (game.getWinner() == nullptr) {
+            this->mainMenu();
+        } else {
+            this->revengeMenu();
+        }
+
+
     }
 
-    sf::sleep(sf::seconds(3));
-    this->revengeMenu();
 }
 
 void Menu::renderWindow() {

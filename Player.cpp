@@ -24,16 +24,19 @@ Player::Player(int player, std::string name, float spawnX, float spawnY) {
             std::cout << "Could not load player1 texture" << std::endl;
             exit(2);
         }
+        this->sprite.setTexture(texture);
+        this->sprite.setPosition(spawnX, spawnY);
     } else if (this->player == 2) {
         if (!texture.loadFromFile("../assets/hrac2.png")) {
             std::cout << "Could not load player2 texture" << std::endl;
             exit(2);
         }
+
+        this->sprite.setTexture(texture);
+        this->sprite.setOrigin(this->sprite.getLocalBounds().width,0.f);
+        this->sprite.setPosition(spawnX, spawnY);
     }
 
-    this->sprite.setTexture(texture);
-
-    this->sprite.setPosition(spawnX, spawnY);
 
 }
 
@@ -117,14 +120,17 @@ void Player::updateTexture(sf::String string) {
             std::cout << "Could not load player1 texture" << std::endl;
             exit(2);
         }
+        this->sprite.setTexture(texture,true);
     } else if (this->player == 2) {
         if (!texture.loadFromFile("../assets/" + string)) {
             std::cout << "Could not load player2 texture" << std::endl;
             exit(2);
         }
+        this->sprite.setTexture(texture,true);
+        this->sprite.setOrigin(this->sprite.getLocalBounds().width,0.f);
     }
 
-    this->sprite.setTexture(texture,true);
+
 
 }
 
