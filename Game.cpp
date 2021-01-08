@@ -125,6 +125,7 @@ Game::~Game() {
     delete this->sound;
     delete this->bufferM;
     delete this->battleMusic;
+
 }
 
 
