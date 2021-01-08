@@ -140,11 +140,11 @@ void Game::pollEvents() {
         switch (this->ev.type) {
 
             case sf::Event::Closed:
-                do {
+/*                do {
                     mutex.lock();
-                    socket.setBlocking(true);
+
                     socket.send(disc.c_str(),disc.length()+1);
-                    socket.setBlocking(false);
+
                     done = true;
 
                     if (this->playerType == 's') {
@@ -155,9 +155,14 @@ void Game::pollEvents() {
                     window.close();
                     mutex.unlock();
 
-                } while (!done);
+                } while (!done);*/
 
+                if (this->playerType == 's') {
+                    this->listener.close();
 
+                }
+                this->socket.disconnect();
+                window.close();
 
                 break;
             case sf::Event::GainedFocus:
@@ -505,26 +510,26 @@ void Game::thUpdateOnlineGame() {
     bool attacked, blocked;
     int healthH2, healthHrac;
     int sound;
+    char data[200];
+    size_t received;
+    std::string txt;
 
     while (!this->endGame) {
         mutex.lock();
 
-        char data[2000];
-        size_t received;
+/*
+
         socket.receive(data, sizeof(data),received);
-        if (received > 0) {
-            std::string txt;
-            txt = data;
+        if (received > 0 && txt.compare(data) == 1) {
 
-            if (txt == "d") {
-                std::cout << "Enemy sa odpojil" << std::endl;
-                socket.disconnect();
-                playSound("vyhralHrac.wav");
-                this->endGame = true;
-            }
-
-
+            std::cout << "Enemy sa odpojil" << std::endl;
+            socket.disconnect();
+            playSound("vyhralHrac.wav");
+            this->endGame = true;
         }
+
+*/
+
         socket.receive(packet);
         if (packet >> hrac2Pos.x >> hrac2Pos.y >> attacked >> blocked >> sound >> healthHrac) {
             this->player->setHealth(healthHrac);
