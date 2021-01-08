@@ -357,7 +357,7 @@ void Menu::pollEvents() {
                             case 6:
                                 if (this->GetPressedItem() == 2) {
                                     this->playSound("select.ogg");
-                                    this->window.close();
+                                    this->mainMenu();
                                 } else if (this->GetPressedItem() == 1) {
                                     this->playSound("select.ogg");
                                     if (this->playerType == 'c') {
@@ -397,6 +397,7 @@ void Menu::startGame(char type, sf::String playerName, sf::String serverIP) {
         game.render();
         game.pollEvents();
     }
+
     sf::sleep(sf::seconds(3));
     this->revengeMenu();
 }
