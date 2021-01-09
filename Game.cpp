@@ -120,6 +120,7 @@ Game::~Game() {
     delete this->sound;
     delete this->bufferM;
     delete this->battleMusic;
+    this->terminateThreads();
 
 }
 
@@ -456,13 +457,12 @@ void Game::init() {
     this->initGUI();
     this->playMusic("battleMusic.ogg");
 
-    sf::Thread *packetThread;
-    packetThread = new sf::Thread(&Game::thUpdateOnlineGame, this);
-    packetThread->launch();
 
-    sf::Thread *animThread;
-    animThread = new sf::Thread(&Game::thAnimate, this);
-    animThread->launch();
+    this->packetThread = new sf::Thread(&Game::thUpdateOnlineGame, this);
+    this->packetThread->launch();
+
+    this->animThread = new sf::Thread(&Game::thAnimate, this);
+    this->animThread->launch();
 }
 
 
@@ -647,6 +647,14 @@ bool Game::musCooldown() {
 
 Player* Game::getWinner() {
     return this->winner;
+}
+
+void Game::terminateThreads() {
+    this->animThread->terminate();
+    this->packetThread->terminate();
+    delete this->animThread;
+
+    delete this->packetThread;
 }
 
 
