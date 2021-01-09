@@ -129,8 +129,6 @@ public:
 
     bool musCooldown();
 
-    void terminateThreads();
-
     bool connect(sf::String ip);
 
 };

@@ -118,10 +118,9 @@ Game::~Game() {
     delete this->sound;
     delete this->bufferM;
     delete this->battleMusic;
-    if (this->endGame)
-    {
-        this->terminateThreads();
-    }
+
+    delete this->animThread;
+    delete this->packetThread;
 
 }
 
@@ -152,6 +151,8 @@ void Game::pollEvents() {
 
                 }
                 this->socket.disconnect();
+                this->animThread->terminate();
+                this->packetThread->terminate();
                 window.close();
                 mutex.unlock();
 
@@ -340,6 +341,8 @@ void Game::render() {
     this->renderGui();
 
     if (this->endGame) {
+        this->animThread->terminate();
+        this->packetThread->terminate();
         this->renderEnd();
     }
 
@@ -450,7 +453,7 @@ bool Game::clientSide(sf::String serverIP) {
 
     int pocetPokusov = 0;
     do {
-        if (pocetPokusov > 10) {
+        if (pocetPokusov > 1) {
             std::cout << "Unable to connect to server" << std::endl;
             return false;
         }
@@ -601,13 +604,6 @@ bool Game::musCooldown() {
 
 Player* Game::getWinner() {
     return this->winner;
-}
-
-void Game::terminateThreads() {
-    this->animThread->terminate();
-    this->packetThread->terminate();
-    delete this->animThread;
-    delete this->packetThread;
 }
 
 bool Game::connect(sf::String ip) {
