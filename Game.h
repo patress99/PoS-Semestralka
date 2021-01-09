@@ -33,7 +33,8 @@ private:
     sf::Packet packet;
     sf::TcpSocket socket;
     sf::TcpListener listener;
-
+    sf::Thread *packetThread;
+    sf::Thread *animThread;
     sf::Mutex mutex;
 
     //sf::UdpSocket socket;
@@ -135,5 +136,7 @@ public:
     Player* getWinner();
 
     bool musCooldown();
+
+    void terminateThreads();
 
 };
