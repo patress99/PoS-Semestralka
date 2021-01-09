@@ -8,6 +8,9 @@ Game::Game(sf::RenderWindow& wind) : window(wind) {
     this->battleMusic = new sf::Sound();
 
     this->playable = true;
+    this->playerAttacked = false;
+    this->playerBlocked = false;
+    this->playerCritical = false;
 
     this->musicCooldown = 0;
 
@@ -114,6 +117,7 @@ void Game::initPlayers() {
 Game::~Game() {
     delete this->player;
     delete this->enemy;
+
     delete this->buffer;
     delete this->sound;
     delete this->bufferM;
@@ -151,17 +155,9 @@ void Game::pollEvents() {
 
                 }
                 this->socket.disconnect();
-                this->animThread->terminate();
-                this->packetThread->terminate();
                 window.close();
                 mutex.unlock();
 
-                if (this->playerType == 's') {
-                    this->listener.close();
-
-                }
-                this->socket.disconnect();
-                window.close();
                 exit(0);
                 break;
             case sf::Event::GainedFocus:
@@ -423,12 +419,13 @@ void Game::init() {
     this->initGUI();
     this->playMusic("battleMusic.ogg");
 
-
     this->packetThread = new sf::Thread(&Game::thUpdateOnlineGame, this);
     this->packetThread->launch();
 
     this->animThread = new sf::Thread(&Game::thAnimate, this);
     this->animThread->launch();
+
+
 }
 
 
@@ -453,7 +450,7 @@ bool Game::clientSide(sf::String serverIP) {
 
     int pocetPokusov = 0;
     do {
-        if (pocetPokusov > 1) {
+        if (pocetPokusov > 5) {
             std::cout << "Unable to connect to server" << std::endl;
             return false;
         }
@@ -539,7 +536,7 @@ void Game::thUpdateOnlineGame() {
         sf::sleep(sf::milliseconds(1));
 
     }
-
+    this->packetThread->terminate();
 }
 
 void Game::thAnimate() {
@@ -570,7 +567,7 @@ void Game::thAnimate() {
                 this->player->updateTexture("hrac2blok.png");
 
             }
-            sf::sleep(sf::milliseconds(100));
+            sf::sleep(sf::milliseconds(300));
 
             if (this->playerType == 's') {
                 this->player->updateTexture("hrac1.png");
@@ -582,7 +579,7 @@ void Game::thAnimate() {
         }
 
     }
-
+    this->animThread->terminate();
 }
 
 void Game::setPlayerName(sf::String string) {

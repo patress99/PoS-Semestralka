@@ -45,9 +45,9 @@ private:
     sf::RectangleShape playerHealthBarBack;
     sf::Text playerName;
 
-    bool playerAttacked = false;
-    bool playerBlocked = false;
-    bool playerCritical = false;
+    bool playerAttacked;
+    bool playerBlocked;
+    bool playerCritical;
 
     Player *enemy;
     sf::RectangleShape enemyHealthBar;
