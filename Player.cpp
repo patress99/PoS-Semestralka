@@ -19,6 +19,9 @@ Player::Player(int player, std::string name, float spawnX, float spawnY) {
 
 
     this->player = player;
+
+    this->sprite.setScale(2.f,2.f);
+
     if (this->player == 1) {
         if (!texture.loadFromFile("../assets/hrac1.png")) {
             std::cout << "Could not load player1 texture" << std::endl;
@@ -33,6 +36,7 @@ Player::Player(int player, std::string name, float spawnX, float spawnY) {
         }
 
         this->sprite.setTexture(texture);
+
         this->sprite.setOrigin(this->sprite.getLocalBounds().width,0.f);
         this->sprite.setPosition(spawnX, spawnY);
     }

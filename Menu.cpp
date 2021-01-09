@@ -4,7 +4,7 @@
 
 Menu::Menu() {
 
-    this->playerName = "Player";
+    this->playerName = "";
     this->serverIP = "localhost";
     this->playerType = 'x';
 
@@ -435,8 +435,10 @@ void Menu::startGame(char type, sf::String playerName, sf::String serverIP) {
 
     Game game(this->window);
 
+    game.setPlayerType(type);
     game.setPlayerName(playerName);
-    if (!game.setPlayerType(type, serverIP)) {
+
+    if (!game.connect(serverIP)) {
         this->failedToConnectMenu();
         sf::sleep(sf::seconds(3));
         this->ipMenu();

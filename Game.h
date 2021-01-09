@@ -24,13 +24,11 @@ private:
     sf::Texture worldBackgroundTex;
     sf::Sprite worldBackground;
 
-    sf::Texture grassTex;
-    sf::Sprite grass;
-
     sf::Texture muteTex;
     sf::Sprite muteIcon;
 
     sf::Packet packet;
+
     sf::TcpSocket socket;
     sf::TcpListener listener;
     sf::Thread *packetThread;
@@ -121,11 +119,11 @@ public:
 
     bool clientSide(sf::String ip);
 
-    bool setPlayerType(char type, sf::String ip);
-
     void thUpdateOnlineGame();
 
     void thAnimate();
+
+    void setPlayerType(char type);
 
     void setPlayerName(sf::String string);
 
@@ -138,5 +136,7 @@ public:
     bool musCooldown();
 
     void terminateThreads();
+
+    bool connect(sf::String ip);
 
 };
