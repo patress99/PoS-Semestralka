@@ -121,7 +121,10 @@ Game::~Game() {
     delete this->sound;
     delete this->bufferM;
     delete this->battleMusic;
-    this->terminateThreads();
+    if (this->endGame)
+    {
+        this->terminateThreads();
+    }
 
 }
 
