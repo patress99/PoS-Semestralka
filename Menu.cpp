@@ -16,18 +16,17 @@ Menu::Menu() {
 
     if (!font.loadFromFile("../fonts/aAsianNinja.ttf")) {
         std::cout << "Cannot load Font aAsianNinja!" << std::endl;
+        exit(1);
     }
 
 
     if (!this->backgroundTex.loadFromFile("../assets/mlaticka.png")) {
         std::cout << "ERROR::GAME::COULD NOT LOAD BACKGROUND TEXTURE" << std::endl;
-        exit(1);
     }
 
     sf::Image image;
     if (!image.loadFromFile("../assets/mlaticka.png")) {
         std::cout << "ERROR::GAME::COULD NOT LOAD ICON" << "\n";
-        exit(1);
     }
 
 
@@ -41,7 +40,7 @@ Menu::Menu() {
 
     this->revText.setFont(this->font);
     this->revText.setFillColor(sf::Color::White);
-    this->revText.setString("Odveta ?");
+    this->revText.setString("Rematch ?");
     this->revText.setPosition(sf::Vector2f(this->offsetX, this->offsetY * 1));
 
 
@@ -215,7 +214,7 @@ void Menu::serverStartMenu() {
     this->menu[0].setFillColor(sf::Color::White);
     this->menu[0].setString("Waiting for Client to connect...");
     this->menu[0].setPosition(sf::Vector2f(((float) this->window.getSize().x / 2) - (this->menu[0].getLocalBounds().width / 2),
-                                     this->window.getSize().y / 2));
+                                           ((float) this->window.getSize().y / 2)  - (this->menu[0].getLocalBounds().height / 2)));
     this->menu[0].setScale(1, 1);
 
 
@@ -243,7 +242,7 @@ void Menu::clientStartMenu() {
     this->menu[0].setFillColor(sf::Color::White);
     this->menu[0].setString("Waiting for Server to host game...");
     this->menu[0].setPosition(sf::Vector2f(((float) this->window.getSize().x / 2) - (this->menu[0].getLocalBounds().width / 2),
-                                     this->window.getSize().y / 2));
+                                           ((float) this->window.getSize().y / 2)  - (this->menu[0].getLocalBounds().height / 2)));
     this->menu[0].setScale(1, 1);
 
     this->window.draw(this->menu[0]);
@@ -259,12 +258,12 @@ void Menu::revengeMenu() {
 
     this->menu[0].setFont(this->font);
     this->menu[0].setFillColor(sf::Color::Red);
-    this->menu[0].setString("ANO");
+    this->menu[0].setString("Yes");
     this->menu[0].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 2));
 
     this->menu[1].setFont(this->font);
     this->menu[1].setFillColor(sf::Color::White);
-    this->menu[1].setString("NIE");
+    this->menu[1].setString("No");
     this->menu[1].setPosition(sf::Vector2f(this->offsetX, this->offsetY * 3));
 }
 
@@ -279,7 +278,7 @@ void Menu::failedToConnectMenu() {
     this->menu[0].setFillColor(sf::Color::White);
     this->menu[0].setString("Failed to connect to the Server! Returning to menu");
     this->menu[0].setPosition(sf::Vector2f(((float) this->window.getSize().x / 2) - (this->menu[0].getLocalBounds().width / 2),
-                                           this->window.getSize().y / 2));
+                                           ((float) this->window.getSize().y / 2)  - (this->menu[0].getLocalBounds().height / 2)));
     this->menu[0].setScale(1, 1);
 
     this->window.draw(this->menu[0]);

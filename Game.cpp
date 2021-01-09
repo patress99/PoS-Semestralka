@@ -7,7 +7,6 @@ Game::Game(sf::RenderWindow& wind) : window(wind) {
     this->bufferM = new sf::SoundBuffer();
     this->battleMusic = new sf::Sound();
 
-    this->ip = sf::IpAddress::getLocalAddress();
     this->playable = true;
 
     this->musicCooldown = 0;
@@ -20,17 +19,15 @@ void Game::initVariables() {
 
     if (!this->worldBackgroundTex.loadFromFile("../assets/background.png")) {
         std::cout << "ERROR::GAME::COULD NOT LOAD BACKGROUND TEXTURE" << "\n";
-        exit(1);
     }
 
     if (!this->gameFont.loadFromFile("../fonts/aAsianNinja.ttf")) {
         std::cout << "ERROR::GAME::Failed to load font" << "\n";
-        exit(3);
+        exit(1);
     }
 
     if (!this->muteTex.loadFromFile("../assets/mute.png")) {
         std::cout << "ERROR::GAME::COULD NOT LOAD MUTE ICON" << "\n";
-        exit(3);
     }
     this->muteIcon.setTexture(this->muteTex);
     this->muteIcon.scale(0.2f,0.2f);
@@ -216,8 +213,8 @@ void Game::renderWorld() {
 
 
 void Game::updateCollision() {
-    //Out of bounds player1
 
+    //Out of bounds player1
     if (this->player->getBounds().left < 0.f) {
         this->player->setPosition(0.f, this->player->getBounds().top);
 
@@ -328,7 +325,7 @@ void Game::updateInput() {
     mutex.lock();
     packet << this->player->getPos().x << this->player->getPos().y << this->playerAttacked << this->playerBlocked << sound
            << this->enemy->getHealth();
-    //TCP
+
     socket.send(packet);
     packet.clear();
     mutex.unlock();
@@ -338,17 +335,13 @@ void Game::render() {
 
     this->window.clear();
 
-
     this->renderWorld();
     this->renderPlayers();
     this->renderGui();
 
-
-
     if (this->endGame) {
         this->renderEnd();
     }
-
 
     this->window.display();
 }
@@ -376,17 +369,15 @@ void Game::renderEnd() {
     sf::Text winnerName;
     sf::RectangleShape bg;
 
-
-
     winnerName.setFont(this->gameFont);
     winnerName.setCharacterSize(35);
     winnerName.setFillColor(sf::Color::Green);
 
     if (this->winner == nullptr) {
-        winnerName.setString(this->enemyName.getString() + " sa odpojil");
+        winnerName.setString(this->enemyName.getString() + " has disconnected!");
 
     } else {
-        winnerName.setString("Vyhral : " + this->winner->getName());
+        winnerName.setString("Winner : " + this->winner->getName());
     }
     bg.setSize(sf::Vector2f(winnerName.getLocalBounds().width + 50.f, 100.f));
     bg.setFillColor(sf::Color(0,0,0,150));
@@ -444,8 +435,6 @@ void Game::serverSide() {
     std::cout << "Listening on port " << this->port << ". Waiting for client to connect..." << std::endl;
     this->acceptClient();
 
-    //sf::Thread * thread = new sf::Thread(&Game::acceptClient, this);
-    //thread->launch();
 }
 
 void Game::acceptClient() {
@@ -478,11 +467,11 @@ bool Game::clientSide(sf::String serverIP) {
 
 void Game::thUpdateOnlineGame() {
 
-    sf::Vector2f prevPos, hrac2Pos;
+    sf::Vector2f hrac2Pos;
     bool attacked, blocked;
     bool end = false;
-    int healthH2, healthHrac;
-    int sound;
+    int healthHrac;
+    int soundP;
 
 
     while (!this->endGame) {
@@ -492,8 +481,8 @@ void Game::thUpdateOnlineGame() {
         if (packet.getDataSize() == 1) {
             if (packet >> end) {
                 if (end) {
-                    std::cout << "Enemy sa odpojil" << std::endl;
-                    std::cout << end << std::endl;
+                    std::string eName = this->enemyName.getString();
+                    std::cout << eName << " has disconnected!" << std::endl;
                     socket.disconnect();
                     playSound("protivnikDisconnect.wav");
                     this->endGame = end;
@@ -502,7 +491,7 @@ void Game::thUpdateOnlineGame() {
             }
         }
 
-        if (packet >> hrac2Pos.x >> hrac2Pos.y >> attacked >> blocked >> sound >> healthHrac) {
+        if (packet >> hrac2Pos.x >> hrac2Pos.y >> attacked >> blocked >> soundP >> healthHrac) {
             this->player->setHealth(healthHrac);
             this->enemy->setPosition(hrac2Pos);
             this->enemyBlocked = blocked;
@@ -529,27 +518,24 @@ void Game::thUpdateOnlineGame() {
                 }
             }
 
-            if (sound == 1) {
+            if (soundP == 1) {
                 playSound("empty-hit.wav");
 
-            } else if (sound == 2) {
+            } else if (soundP == 2) {
                 playSound("au.wav");
-            } else if (sound == 3) {
+            } else if (soundP == 3) {
                 playSound("block.ogg");
                 this->playerCritical = true;
-            } else if (sound == 4) {
+            } else if (soundP == 4) {
                 playSound("auCrit.wav");
             }
             packet.clear();
         }
 
-
         mutex.unlock();
         sf::sleep(sf::milliseconds(1));
 
-
     }
-
 
 }
 
@@ -596,10 +582,6 @@ void Game::thAnimate() {
 
 }
 
-sf::RenderWindow& Game::getWindow() {
-    return this->window;
-}
-
 void Game::setPlayerName(sf::String string) {
 
     if (string.isEmpty()) {
@@ -636,7 +618,7 @@ bool Game::connect(sf::String ip) {
         serverSide();
     } else {
         if (!clientSide(ip)) {
-            std::cout << "RIP NENAPOJIL SOMSA" << std::endl;
+            std::cout << "Connection failed!" << std::endl;
             this->player = nullptr;
             this->enemy = nullptr;
             return false;

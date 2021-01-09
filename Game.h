@@ -35,12 +35,8 @@ private:
     sf::Thread *animThread;
     sf::Mutex mutex;
 
-    //sf::UdpSocket socket;
-    sf::IpAddress ip;
     unsigned short port;
 
-    sf::IpAddress rIp;
-    unsigned short rPort;
 
     Player *winner;
 
@@ -104,8 +100,6 @@ public:
     void updatePlayers();
 
     void updateGUI();
-
-    sf::RenderWindow& getWindow();
 
     void renderGui();
 
