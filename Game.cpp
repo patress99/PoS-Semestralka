@@ -320,10 +320,11 @@ void Game::updateInput() {
     }
 
     mutex.lock();
-    packet << this->player->getPos().x << this->player->getPos().y << this->playerAttacked << this->playerBlocked << sound
+    packet << this->player->getPos().x << this->player->getPos().y << this->playerAttacked << this->playerBlocked << this->playerCritical << sound
            << this->enemy->getHealth();
 
     socket.send(packet);
+
     packet.clear();
     mutex.unlock();
 }
@@ -468,7 +469,7 @@ bool Game::clientSide(sf::String serverIP) {
 void Game::thUpdateOnlineGame() {
 
     sf::Vector2f hrac2Pos;
-    bool attacked, blocked;
+    bool attacked, blocked, critical;
     bool end = false;
     int healthHrac;
     int soundP;
@@ -491,7 +492,7 @@ void Game::thUpdateOnlineGame() {
             }
         }
 
-        if (packet >> hrac2Pos.x >> hrac2Pos.y >> attacked >> blocked >> soundP >> healthHrac) {
+        if (packet >> hrac2Pos.x >> hrac2Pos.y >> attacked >> blocked >> critical >> soundP >> healthHrac) {
             this->player->setHealth(healthHrac);
             this->enemy->setPosition(hrac2Pos);
             this->enemyBlocked = blocked;
@@ -510,6 +511,14 @@ void Game::thUpdateOnlineGame() {
                 }
             }
 
+            if (critical) {
+                if (this->playerType == 's') {
+                    this->enemy->updateTexture("hrac2crit.png");
+                } else {
+                    this->enemy->updateTexture("hrac1crit.png");
+                }
+            }
+
             if (blocked) {
                 if (this->playerType == 's') {
                     this->enemy->updateTexture("hrac2blok.png");
@@ -517,6 +526,9 @@ void Game::thUpdateOnlineGame() {
                     this->enemy->updateTexture("hrac1blok.png");
                 }
             }
+
+
+
 
             if (soundP == 1) {
                 playSound("empty-hit.wav");
@@ -542,6 +554,16 @@ void Game::thUpdateOnlineGame() {
 void Game::thAnimate() {
 
     while (!this->endGame) {
+        if (this->playerCritical) {
+            if (this->playerType == 's') {
+                this->player->updateTexture("hrac1crit.png");
+            } else {
+                this->player->updateTexture("hrac2crit.png");
+
+            }
+        }
+
+
         if (this->playerAttacked) {
 
             if (this->playerType == 's') {
