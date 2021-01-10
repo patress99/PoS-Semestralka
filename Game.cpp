@@ -157,8 +157,6 @@ void Game::pollEvents() {
                 this->socket.disconnect();
                 window.close();
                 mutex.unlock();
-
-                exit(0);
                 break;
             case sf::Event::GainedFocus:
                 this->playable = true;
